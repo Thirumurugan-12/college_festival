@@ -377,155 +377,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showInfoDialog(BuildContext context, String title, Widget body) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.black.withOpacity(0.9),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          title,
-          style: GoogleFonts.orbitron(
-            color: AppColors.accentCyan,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        content: body,
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
+  // Removed unused _showInfoDialog helper
 
-  void _showMobileMenu(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.black.withOpacity(0.9),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        Widget tile(String label, IconData icon, VoidCallback onTap) =>
-            ListTile(
-              leading: Icon(icon, color: AppColors.accentCyan),
-              title: Text(
-                label,
-                style: GoogleFonts.montserrat(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              onTap: () {
-                Navigator.of(ctx).pop();
-                onTap();
-              },
-            );
-
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 8),
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.white24,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-              ),
-              const SizedBox(height: 8),
-              tile('Dates', Icons.event, () {
-                _showInfoDialog(
-                  context,
-                  'Important Dates',
-                  const SizedBox(
-                    width: 320,
-                    child: Text(
-                      '• Registration closes: TBA\n• Auditions: TBA\n• Finals: TBA',
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                  ),
-                );
-              }),
-              tile('Categories', Icons.category, () {
-                _showInfoDialog(
-                  context,
-                  'Categories',
-                  const SizedBox(
-                    width: 320,
-                    child: Text(
-                      '• Solo Vocal\n• Duet\n• Band/Group',
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                  ),
-                );
-              }),
-              tile('Jury', Icons.gavel, () {
-                _showInfoDialog(
-                  context,
-                  'Jury',
-                  const SizedBox(
-                    width: 320,
-                    child: Text(
-                      'To be announced soon.',
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                  ),
-                );
-              }),
-              tile('Prizes', Icons.emoji_events, () {
-                _showInfoDialog(
-                  context,
-                  'Prizes',
-                  const SizedBox(
-                    width: 320,
-                    child: Text(
-                      'Cash prizes and goodies to be announced.',
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                  ),
-                );
-              }),
-              const Divider(height: 1, color: Colors.white24),
-              tile('Details', Icons.info, () {
-                _showInfoDialog(
-                  context,
-                  'Details',
-                  const SizedBox(
-                    width: 320,
-                    child: Text(
-                      'For detailed information and assistance, contact us.',
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                  ),
-                );
-              }),
-              tile('FAQs', Icons.help_center, () {
-                _showInfoDialog(
-                  context,
-                  'FAQs',
-                  const SizedBox(
-                    width: 320,
-                    child: Text(
-                      'Frequently asked questions will appear here.',
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                  ),
-                );
-              }),
-              const SizedBox(height: 8),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // Removed mobile menu bottom sheet per new design
 
   @override
   Widget build(BuildContext context) {
@@ -692,7 +546,108 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
 
-                // Section 2: Who can participate + carousel
+                // Section 2: Manifesto (bold lines before "Who can participate")
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isWide = constraints.maxWidth >= 900;
+                    final h = constraints.maxHeight;
+                    final isShort = h < 640;
+                    final bottomPad = isWide
+                        ? (isShort ? 24.0 : 120.0)
+                        : (isShort ? 8.0 : 72.0);
+
+                    TextStyle lineStyle(double base) => GoogleFonts.bebasNeue(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.0,
+                      height: 0.95,
+                      fontSize: isShort
+                          ? (base * 0.7)
+                          : (isWide
+                                ? base
+                                : (MediaQuery.of(context).size.width < 600
+                                      ? base * 0.8
+                                      : base * 0.9)),
+                    );
+
+                    final lines = <String>[
+                      'WE MADE A STAGE FOR THE ONES WHO DREAM',
+                      'THE VOICES THAT SOAR',
+                      'THE BEATS THAT MOVE HEARTS',
+                      'BIGGER • BOLDER • BETTER',
+                      'THE TALENTS THAT DARE',
+                      'AND THE ONES WHO WILL DEFINE THE SOUND OF TOMORROW',
+                    ];
+
+                    return Padding(
+                      padding: EdgeInsets.fromLTRB(16, 16, 16, bottomPad),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 1200),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Staggered bold lines
+                              FadeInUp(
+                                duration: const Duration(milliseconds: 700),
+                                child: Text(
+                                  lines[0],
+                                  textAlign: TextAlign.center,
+                                  style: lineStyle(72),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              FadeInUp(
+                                duration: const Duration(milliseconds: 700),
+                                delay: const Duration(milliseconds: 80),
+                                child: Text(
+                                  lines[1],
+                                  textAlign: TextAlign.center,
+                                  style: lineStyle(68),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              FadeInUp(
+                                duration: const Duration(milliseconds: 700),
+                                delay: const Duration(milliseconds: 140),
+                                child: Text(
+                                  lines[2],
+                                  textAlign: TextAlign.center,
+                                  style: lineStyle(64),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              FadeInUp(
+                                duration: const Duration(milliseconds: 700),
+                                delay: const Duration(milliseconds: 200),
+                                child: Text(
+                                  lines[3],
+                                  textAlign: TextAlign.center,
+                                  style: lineStyle(
+                                    72,
+                                  ).copyWith(color: Colors.yellow),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              FadeInUp(
+                                duration: const Duration(milliseconds: 700),
+                                delay: const Duration(milliseconds: 260),
+                                child: Text(
+                                  lines[4],
+                                  textAlign: TextAlign.center,
+                                  style: lineStyle(68),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
+                // Section 3: Who can participate + carousel
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final isWide = constraints.maxWidth >= 900;
@@ -743,7 +698,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
 
-                // Section 3: About
+                // Section 4: About
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final isWide = constraints.maxWidth >= 900;
@@ -1057,7 +1012,109 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
 
-                // Section 4: Eligibility
+                // Section 5: Flashbacks (ctEvents)
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isWide = constraints.maxWidth >= 900;
+                    final h = constraints.maxHeight;
+                    final isShort = h < 640;
+                    final bottomPad = isWide
+                        ? (isShort ? 80.0 : 160.0)
+                        : (isShort ? 64.0 : 120.0);
+
+                    // Assets from lib/assets/ctEvents
+                    const ctEventsAssets = [
+                      'lib/assets/ctEvents/download.png',
+                      'lib/assets/ctEvents/download (1).png',
+                      'lib/assets/ctEvents/past_7.4c458172ad4bc461cfae.png',
+                      'lib/assets/ctEvents/past_9.edbe9c144008f2ca5ad1.png',
+                      'lib/assets/ctEvents/past_10.437b7a9c511d8d650b42.png',
+                      'lib/assets/ctEvents/past_11.151f2d5db6fadf8c5d89.png',
+                      'lib/assets/ctEvents/past_12.599d30a9dda6becad387.png',
+                      'lib/assets/ctEvents/past_13.2e63da7d68cb5536d6a9.png',
+                      'lib/assets/ctEvents/past_14.7b2dc2209af480cacead.png',
+                    ];
+
+                    final rowHeight = isWide ? 140.0 : (isShort ? 80.0 : 110.0);
+                    final itemWidth = isWide ? 240.0 : 200.0;
+
+                    Widget row({required bool reverse, required double speed}) {
+                      return _AutoScrollCardStrip(
+                        height: rowHeight,
+                        itemWidth: itemWidth,
+                        itemCount: ctEventsAssets.length,
+                        assets: ctEventsAssets,
+                        radius: 14,
+                        itemMargin: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        speed: speed,
+                        reverse: reverse,
+                        enableHover: true,
+                        hoverScale: 1.05,
+                        hoverDuration: const Duration(milliseconds: 180),
+                      );
+                    }
+
+                    return Padding(
+                      padding: EdgeInsets.fromLTRB(16, 16, 16, bottomPad),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FadeInDown(
+                              duration: const Duration(milliseconds: 650),
+                              child: SectionTitle('NOW SOME FLASHBACKS'),
+                            ),
+                            const SizedBox(height: 10),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 650),
+                              delay: const Duration(milliseconds: 120),
+                              child: SectionText(
+                                'This is not our first time. And definitely not the last.',
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            // Three alternating-direction rows with staggered entrance
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 700),
+                              child: row(reverse: false, speed: 0.9),
+                            ),
+                            const SizedBox(height: 10),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 800),
+                              delay: const Duration(milliseconds: 100),
+                              child: row(reverse: true, speed: 1.1),
+                            ),
+                            const SizedBox(height: 10),
+                            // FadeInUp(
+                            //   duration: const Duration(milliseconds: 900),
+                            //   delay: const Duration(milliseconds: 180),
+                            //   child: row(reverse: false, speed: 1.0),
+                            // ),
+                            // const SizedBox(height: 20),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 700),
+                              delay: const Duration(milliseconds: 220),
+                              child: Text(
+                                'this time exclusively for colleges in tamilnadu',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.white70,
+                                  fontSize: isWide ? 16 : 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
+                // Section 6: About Us
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final isWide = constraints.maxWidth >= 900;
@@ -1069,15 +1126,209 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Padding(
                       padding: EdgeInsets.fromLTRB(16, 16, 16, bottomPad),
                       child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 1000),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              FadeInDown(
+                                duration: const Duration(milliseconds: 700),
+                                child: SectionTitle('ABOUT US'),
+                              ),
+                              const SizedBox(height: 12),
+                              FadeInUp(
+                                duration: const Duration(milliseconds: 700),
+                                delay: const Duration(milliseconds: 120),
+                                child: SectionText(
+                                  'College Thiruvizha is a creator-first festival bringing talents from across Tamil Nadu together.\n'
+                                  'We celebrate voices, visuals, and performances with a platform that is bigger, bolder, and better.',
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              FadeInUp(
+                                duration: const Duration(milliseconds: 700),
+                                delay: const Duration(milliseconds: 200),
+                                child: Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: [
+                                    _InfoPill(
+                                      icon: Icons.music_note,
+                                      label: 'Music & Performance',
+                                    ),
+                                    _InfoPill(
+                                      icon: Icons.camera_alt,
+                                      label: 'Photo & Visuals',
+                                    ),
+                                    _InfoPill(
+                                      icon: Icons.people_alt,
+                                      label: 'Community & Collaboration',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
+                // Section 7: Friends (Sponsors)
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isWide = constraints.maxWidth >= 900;
+                    final h = constraints.maxHeight;
+                    final isShort = h < 640;
+                    final bottomPad = isWide
+                        ? (isShort ? 80.0 : 160.0)
+                        : (isShort ? 64.0 : 120.0);
+
+                    // Use sponser.png in an auto-scrolling carousel
+                    const sponsorAssets = ['lib/assets/sponser.png'];
+
+                    final rowHeight = isWide ? 120.0 : (isShort ? 80.0 : 100.0);
+                    final itemWidth = isWide ? 240.0 : 200.0;
+
+                    return Padding(
+                      padding: EdgeInsets.fromLTRB(16, 16, 16, bottomPad),
+                      child: Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            SectionTitle('ELIGIBILITY'),
-                            SizedBox(height: 12),
-                            SectionText(
-                              '• Participants must be currently enrolled in a college in Tamil Nadu.\n'
-                              '• Valid college ID is mandatory during registration and finals.\n'
-                              '• Categories: Solo Vocal, Duet, and Band/Group.',
+                            FadeInDown(
+                              duration: const Duration(milliseconds: 650),
+                              child: SectionTitle('FRIENDS'),
+                            ),
+                            const SizedBox(height: 10),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 650),
+                              delay: const Duration(milliseconds: 120),
+                              child: SectionText(
+                                'Made possible by our partners',
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 700),
+                              child: _AutoScrollCardStrip(
+                                height: rowHeight,
+                                itemWidth: itemWidth,
+                                itemCount: sponsorAssets.length,
+                                assets: sponsorAssets,
+                                radius: 14,
+                                itemMargin: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 6,
+                                ),
+                                speed: 0.8,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
+                // Section 8: Stay Connected & Contact
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isWide = constraints.maxWidth >= 900;
+                    final h = constraints.maxHeight;
+                    final isShort = h < 640;
+                    final bottomPad = isWide
+                        ? (isShort ? 80.0 : 160.0)
+                        : (isShort ? 64.0 : 120.0);
+                    final iconSize = isWide ? 28.0 : 24.0;
+
+                    Widget circleIcon(IconData icon, Color bg) {
+                      return Container(
+                        width: iconSize + 20,
+                        height: iconSize + 20,
+                        decoration: BoxDecoration(
+                          color: bg.withOpacity(0.12),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: bg.withOpacity(0.3)),
+                        ),
+                        child: Icon(icon, color: Colors.white, size: iconSize),
+                      );
+                    }
+
+                    return Padding(
+                      padding: EdgeInsets.fromLTRB(16, 16, 16, bottomPad),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FadeInDown(
+                              duration: const Duration(milliseconds: 650),
+                              child: SectionTitle('STAY CONNECTED'),
+                            ),
+                            const SizedBox(height: 14),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 650),
+                              delay: const Duration(milliseconds: 100),
+                              child: Wrap(
+                                spacing: 14,
+                                runSpacing: 10,
+                                alignment: WrapAlignment.center,
+                                children: [
+                                  circleIcon(
+                                    Icons.camera_alt,
+                                    Colors.purple,
+                                  ), // Instagram
+                                  circleIcon(
+                                    Icons.facebook,
+                                    Colors.blue,
+                                  ), // Facebook
+                                  circleIcon(
+                                    Icons.alternate_email,
+                                    Colors.cyan,
+                                  ), // Twitter/X
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 650),
+                              delay: const Duration(milliseconds: 160),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SectionText('Have any questions?'),
+                                  const SizedBox(height: 10),
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      // TODO: Hook to contact action (email/whatsapp)
+                                    },
+                                    icon: const Icon(
+                                      Icons.mail,
+                                      color: Colors.black,
+                                    ),
+                                    label: const Text(
+                                      'Contact Us',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.yellow,
+                                      foregroundColor: Colors.black,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 22,
+                                        vertical: 14,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -1175,13 +1426,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
 
                       final activeFooterIndex = () {
-                        // Map page index to footer item: 1->DATES, 2->CATEGORIES, 3->PRIZES
+                        // After inserting Manifesto as Section 2, shift mapping by +1 for subsequent sections
+                        // New map: 2->DATES, 3->CATEGORIES, 4->PRIZES
                         switch (_bgIndex) {
-                          case 1:
-                            return 0; // DATES
                           case 2:
-                            return 1; // CATEGORIES
+                            return 0; // DATES
                           case 3:
+                            return 1; // CATEGORIES
+                          case 4:
                             return 2; // PRIZES
                           default:
                             return -1; // none
@@ -1219,27 +1471,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   active: activeFooterIndex == 2,
                                 ),
                               ],
-                            ),
-                          ),
-                        ),
-                      );
-
-                      final centerMenuMobile = SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: () => _showMobileMenu(context),
-                          icon: const Icon(Icons.menu),
-                          label: const Text('Menu'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black.withOpacity(0.06),
-                            foregroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 14,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: const BorderSide(color: Colors.black26),
                             ),
                           ),
                         ),
@@ -1295,19 +1526,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       );
 
-                      final rightGroupMobile = Column(
-                        mainAxisSize: MainAxisSize.min,
+                      final rightGroupMobile = Row(
+                        mainAxisSize: MainAxisSize.max,
                         children: [
-                          SizedBox(
-                            width: double.infinity,
+                          Expanded(
                             child: ElevatedButton(
                               onPressed: () => RulesDialog.show(context),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.black,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 16,
+                                  horizontal: 16,
+                                  vertical: 14,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -1319,9 +1549,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            width: double.infinity,
+                          const SizedBox(width: 10),
+                          Expanded(
                             child: ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(
@@ -1334,8 +1563,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 backgroundColor: Colors.yellow,
                                 foregroundColor: Colors.black,
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 16,
+                                  horizontal: 16,
+                                  vertical: 14,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -1370,14 +1599,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         );
                       } else {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            centerMenuMobile,
-                            const SizedBox(height: 10),
-                            rightGroupMobile,
-                          ],
-                        );
+                        return rightGroupMobile;
                       }
                     },
                   ),
@@ -1510,6 +1732,10 @@ class _AutoScrollCardStrip extends StatefulWidget {
   final double radius;
   final EdgeInsetsGeometry itemMargin;
   final double speed; // pixels per frame
+  final bool reverse; // scroll in opposite direction
+  final bool enableHover; // enable hover scale effect (web/desktop)
+  final double hoverScale;
+  final Duration hoverDuration;
 
   const _AutoScrollCardStrip({
     required this.height,
@@ -1519,6 +1745,10 @@ class _AutoScrollCardStrip extends StatefulWidget {
     required this.radius,
     required this.itemMargin,
     required this.speed,
+    this.reverse = false,
+    this.enableHover = false,
+    this.hoverScale = 1.04,
+    this.hoverDuration = const Duration(milliseconds: 180),
   });
 
   @override
@@ -1535,9 +1765,12 @@ class _AutoScrollCardStripState extends State<_AutoScrollCardStrip> {
     _timer = Timer.periodic(const Duration(milliseconds: 16), (_) {
       if (!_ctrl.hasClients) return;
       final max = _ctrl.position.maxScrollExtent;
-      final next = _ctrl.offset + widget.speed;
+      final delta = widget.reverse ? -widget.speed : widget.speed;
+      final next = _ctrl.offset + delta;
       if (next >= max) {
         _ctrl.jumpTo(0);
+      } else if (next <= 0) {
+        _ctrl.jumpTo(max);
       } else {
         _ctrl.jumpTo(next);
       }
@@ -1581,31 +1814,91 @@ class _AutoScrollCardStripState extends State<_AutoScrollCardStrip> {
               ],
             ),
             clipBehavior: Clip.antiAlias,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.asset(
-                  widget.assets![i % widget.assets!.length],
-                  fit: BoxFit.cover,
-                  filterQuality: FilterQuality.high,
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    height: 60,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.transparent, Colors.black54],
+            child: widget.enableHover
+                ? _HoverableImageCard(
+                    asset: widget.assets![i % widget.assets!.length],
+                    hoverScale: widget.hoverScale,
+                    duration: widget.hoverDuration,
+                  )
+                : Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset(
+                        widget.assets![i % widget.assets!.length],
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.high,
                       ),
-                    ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          height: 60,
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, Colors.black54],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
           );
         },
+      ),
+    );
+  }
+}
+
+// Hoverable image with gentle scale and bottom gradient overlay
+class _HoverableImageCard extends StatefulWidget {
+  final String asset;
+  final double hoverScale;
+  final Duration duration;
+  const _HoverableImageCard({
+    required this.asset,
+    required this.hoverScale,
+    required this.duration,
+  });
+
+  @override
+  State<_HoverableImageCard> createState() => _HoverableImageCardState();
+}
+
+class _HoverableImageCardState extends State<_HoverableImageCard> {
+  bool _hover = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: AnimatedScale(
+        scale: _hover ? widget.hoverScale : 1.0,
+        duration: widget.duration,
+        curve: Curves.easeOut,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              widget.asset,
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.high,
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: 60,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.black54],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1756,6 +2049,41 @@ class _Section3Card extends StatelessWidget {
 }
 
 // removed unused _MenuText and _InfoChip helpers to reduce analyzer noise
+
+// Small rounded info pill used in About Us section
+class _InfoPill extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _InfoPill({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: AppColors.accentCyan, size: 16),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: GoogleFonts.montserrat(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              letterSpacing: 0.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 // Auto vertical scroller to avoid overflow on short screens, with gentle auto-scroll
 class _AutoVerticalScroller extends StatefulWidget {
