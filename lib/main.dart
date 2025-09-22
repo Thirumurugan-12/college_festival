@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constants/app_colors.dart';
-import 'screens/splash_screen.dart';
+import 'screens/home_screen.dart';
 import 'widgets/floating_icons_background.dart';
 
 void main() {
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
           if (child != null) child,
         ],
       ),
-      home: const SplashScreen(),
+      home: const HomeScreen(),
     );
   }
 }

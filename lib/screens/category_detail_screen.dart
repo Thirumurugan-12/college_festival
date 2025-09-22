@@ -193,92 +193,14 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                           final double cardH = isWide ? 320 : 220;
                           return Align(
                             alignment: Alignment.center,
-                            child: FadeInUp(
-                              duration: const Duration(milliseconds: 700),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.28),
-                                      blurRadius: 28,
-                                      offset: const Offset(0, 14),
-                                    ),
-                                  ],
-                                  border: Border.all(
-                                    color: Colors.white24,
-                                    width: 1,
-                                  ),
-                                ),
-                                clipBehavior: Clip.antiAlias,
-                                child: Stack(
-                                  alignment: Alignment.bottomLeft,
-                                  children: [
-                                    SizedBox(
-                                      height: cardH,
-                                      width: cardW,
-                                      child: Image.asset(
-                                        widget.imageAsset,
-                                        fit: BoxFit.cover,
-                                        filterQuality: FilterQuality.high,
-                                      ),
-                                    ),
-                                    Container(
-                                      height: cardH * 0.45,
-                                      decoration: const BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.bottomCenter,
-                                          end: Alignment.topCenter,
-                                          colors: [
-                                            Color.fromARGB(180, 0, 0, 0),
-                                            Color.fromARGB(0, 0, 0, 0),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 10,
-                                              vertical: 6,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.black.withOpacity(
-                                                0.5,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(999),
-                                              border: Border.all(
-                                                color: Colors.white24,
-                                              ),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                const Icon(
-                                                  Icons.wifi,
-                                                  size: 16,
-                                                  color: Colors.white,
-                                                ),
-                                                const SizedBox(width: 6),
-                                                Text(
-                                                  widget.data.mode,
-                                                  style: GoogleFonts.montserrat(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            child: ZoomIn(
+                              duration: const Duration(milliseconds: 800),
+                              delay: const Duration(milliseconds: 100),
+                              child: _HeroImageCard(
+                                imageAsset: widget.imageAsset,
+                                mode: widget.data.mode,
+                                width: cardW + 40,
+                                height: cardH,
                               ),
                             ),
                           );
@@ -293,29 +215,115 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Content blocks with icons and glass look
-                      _CardBlock(
-                        title: 'Entry Format',
-                        icon: Icons.library_music,
-                        child: _EntryFormatBlock(widget.data.entryFormat),
+                      // Content blocks with icons and glass look - Animated sections
+                      SlideInUp(
+                        duration: const Duration(milliseconds: 600),
+                        delay: const Duration(milliseconds: 200),
+                        child: _CardBlock(
+                          title: 'Entry Format',
+                          icon: Icons.library_music,
+                          child: _EntryFormatBlock(widget.data.entryFormat),
+                        ),
                       ),
                       if (widget.data.entryFormat.songSelection.isNotEmpty) ...[
                         const SizedBox(height: 12),
-                        _CardBlock(
-                          title: 'Suggested Songs',
-                          icon: Icons.queue_music,
+                        SlideInLeft(
+                          duration: const Duration(milliseconds: 600),
+                          delay: const Duration(milliseconds: 300),
+                          child: _CardBlock(
+                            title: 'Suggested Songs',
+                            icon: Icons.queue_music,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: widget.data.entryFormat.songSelection
+                                  .asMap()
+                                  .entries
+                                  .map(
+                                    (entry) => FadeInRight(
+                                      duration: const Duration(
+                                        milliseconds: 400,
+                                      ),
+                                      delay: Duration(
+                                        milliseconds: 400 + (entry.key * 50),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 2,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.music_note,
+                                              size: 16,
+                                              color: AppColors.accentPink,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                entry.value,
+                                                style: GoogleFonts.montserrat(
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 12),
+                      SlideInRight(
+                        duration: const Duration(milliseconds: 600),
+                        delay: const Duration(milliseconds: 350),
+                        child: _CardBlock(
+                          title: 'Rules',
+                          icon: Icons.rule,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: widget.data.entryFormat.songSelection
+                            children: widget.data.rules
+                                .asMap()
+                                .entries
                                 .map(
-                                  (s) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 2,
+                                  (entry) => FadeInLeft(
+                                    duration: const Duration(milliseconds: 400),
+                                    delay: Duration(
+                                      milliseconds: 450 + (entry.key * 80),
                                     ),
-                                    child: Text(
-                                      '• $s',
-                                      style: GoogleFonts.montserrat(
-                                        color: Colors.black87,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 3,
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                              top: 6,
+                                            ),
+                                            width: 6,
+                                            height: 6,
+                                            decoration: BoxDecoration(
+                                              color: AppColors.accentCyan,
+                                              borderRadius:
+                                                  BorderRadius.circular(3),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              entry.value,
+                                              style: GoogleFonts.montserrat(
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -323,154 +331,305 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                                 .toList(),
                           ),
                         ),
-                      ],
+                      ),
                       const SizedBox(height: 12),
-                      _CardBlock(
-                        title: 'Rules',
-                        icon: Icons.rule,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: widget.data.rules
-                              .map(
-                                (r) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 2,
-                                  ),
-                                  child: Text(
-                                    '• $r',
-                                    style: GoogleFonts.montserrat(
-                                      color: Colors.black87,
+                      SlideInUp(
+                        duration: const Duration(milliseconds: 600),
+                        delay: const Duration(milliseconds: 400),
+                        child: _CardBlock(
+                          title: 'Judging Criteria',
+                          icon: Icons.assessment,
+                          child: Column(
+                            children: widget.data.judgingCriteria
+                                .asMap()
+                                .entries
+                                .map(
+                                  (entry) => FadeInUp(
+                                    duration: const Duration(milliseconds: 500),
+                                    delay: Duration(
+                                      milliseconds: 500 + (entry.key * 100),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 6,
+                                      ),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.3),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          border: Border.all(
+                                            color: AppColors.accentCyan
+                                                .withOpacity(0.3),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                entry.value.parameter,
+                                                style: GoogleFonts.montserrat(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 4,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.accentPink,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Text(
+                                                '${entry.value.weightage}%',
+                                                style: GoogleFonts.montserrat(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
-                              .toList(),
+                                )
+                                .toList(),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
-                      _CardBlock(
-                        title: 'Judging Criteria',
-                        icon: Icons.assessment,
-                        child: Column(
-                          children: widget.data.judgingCriteria
-                              .map(
-                                (c) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 4,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        c.parameter,
+                      SlideInLeft(
+                        duration: const Duration(milliseconds: 600),
+                        delay: const Duration(milliseconds: 450),
+                        child: _CardBlock(
+                          title: 'Awards',
+                          icon: Icons.emoji_events,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FadeInRight(
+                                duration: const Duration(milliseconds: 500),
+                                delay: const Duration(milliseconds: 550),
+                                child: _AwardItem(
+                                  icon: Icons.emoji_events,
+                                  color: Colors.amber,
+                                  title: 'Winner',
+                                  description: widget.data.awards.winner,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              FadeInRight(
+                                duration: const Duration(milliseconds: 500),
+                                delay: const Duration(milliseconds: 600),
+                                child: _AwardItem(
+                                  icon: Icons.military_tech,
+                                  color: Colors.grey[400]!,
+                                  title: 'Runner Up',
+                                  description: widget.data.awards.runnerUp,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              FadeInRight(
+                                duration: const Duration(milliseconds: 500),
+                                delay: const Duration(milliseconds: 650),
+                                child: _AwardItem(
+                                  icon: Icons.favorite,
+                                  color: Colors.red,
+                                  title: 'Audience Choice',
+                                  description:
+                                      widget.data.awards.audienceChoice,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              FadeInRight(
+                                duration: const Duration(milliseconds: 500),
+                                delay: const Duration(milliseconds: 700),
+                                child: _AwardItem(
+                                  icon: Icons.school,
+                                  color: AppColors.accentCyan,
+                                  title: 'Top College',
+                                  description: widget.data.awards.topCollege,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SlideInRight(
+                        duration: const Duration(milliseconds: 600),
+                        delay: const Duration(milliseconds: 500),
+                        child: _CardBlock(
+                          title: 'Voting',
+                          icon: Icons.how_to_vote,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FadeInLeft(
+                                duration: const Duration(milliseconds: 400),
+                                delay: const Duration(milliseconds: 600),
+                                child: _InfoItem(
+                                  icon: Icons.schedule,
+                                  title: 'Deadline',
+                                  value:
+                                      '${widget.data.voting.deadline.day}/${widget.data.voting.deadline.month}/${widget.data.voting.deadline.year}',
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              FadeInLeft(
+                                duration: const Duration(milliseconds: 400),
+                                delay: const Duration(milliseconds: 650),
+                                child: _InfoItem(
+                                  icon: Icons.computer,
+                                  title: 'Platform',
+                                  value: widget.data.voting.platform,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              FadeInLeft(
+                                duration: const Duration(milliseconds: 400),
+                                delay: const Duration(milliseconds: 700),
+                                child: _InfoItem(
+                                  icon: Icons.info,
+                                  title: 'Notes',
+                                  value: widget.data.voting.notes,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SlideInUp(
+                        duration: const Duration(milliseconds: 600),
+                        delay: const Duration(milliseconds: 550),
+                        child: _CardBlock(
+                          title: 'Jury Panel',
+                          icon: Icons.gavel,
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: widget.data.juryPanel
+                                .asMap()
+                                .entries
+                                .map(
+                                  (entry) => FadeInUp(
+                                    duration: const Duration(milliseconds: 400),
+                                    delay: Duration(
+                                      milliseconds: 650 + (entry.key * 100),
+                                    ),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            AppColors.accentCyan.withOpacity(
+                                              0.8,
+                                            ),
+                                            AppColors.accentPink.withOpacity(
+                                              0.8,
+                                            ),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.1,
+                                            ),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        entry.value,
                                         style: GoogleFonts.montserrat(
+                                          color: Colors.white,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      Text(
-                                        '${c.weightage}%',
-                                        style: GoogleFonts.montserrat(),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SlideInDown(
+                        duration: const Duration(milliseconds: 600),
+                        delay: const Duration(milliseconds: 600),
+                        child: _CardBlock(
+                          title: 'Important Notes',
+                          icon: Icons.info_outline,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: widget.data.importantNotes
+                                .asMap()
+                                .entries
+                                .map(
+                                  (entry) => FadeInUp(
+                                    duration: const Duration(milliseconds: 400),
+                                    delay: Duration(
+                                      milliseconds: 700 + (entry.key * 100),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 4,
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _CardBlock(
-                        title: 'Awards',
-                        icon: Icons.emoji_events,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Winner: ${widget.data.awards.winner}',
-                              style: GoogleFonts.montserrat(),
-                            ),
-                            Text(
-                              'Runner Up: ${widget.data.awards.runnerUp}',
-                              style: GoogleFonts.montserrat(),
-                            ),
-                            Text(
-                              'Audience Choice: ${widget.data.awards.audienceChoice}',
-                              style: GoogleFonts.montserrat(),
-                            ),
-                            Text(
-                              'Top College: ${widget.data.awards.topCollege}',
-                              style: GoogleFonts.montserrat(),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _CardBlock(
-                        title: 'Voting',
-                        icon: Icons.how_to_vote,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Deadline: ${widget.data.voting.deadline.toLocal()}',
-                              style: GoogleFonts.montserrat(),
-                            ),
-                            Text(
-                              'Platform: ${widget.data.voting.platform}',
-                              style: GoogleFonts.montserrat(),
-                            ),
-                            Text(
-                              'Notes: ${widget.data.voting.notes}',
-                              style: GoogleFonts.montserrat(),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _CardBlock(
-                        title: 'Jury Panel',
-                        icon: Icons.gavel,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: widget.data.juryPanel
-                              .map(
-                                (j) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 2,
-                                  ),
-                                  child: Text(
-                                    '• $j',
-                                    style: GoogleFonts.montserrat(
-                                      color: Colors.black87,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                              top: 6,
+                                            ),
+                                            padding: const EdgeInsets.all(2),
+                                            decoration: BoxDecoration(
+                                              color: Colors.orange,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: const Icon(
+                                              Icons.lightbulb,
+                                              size: 12,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              entry.value,
+                                              style: GoogleFonts.montserrat(
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _CardBlock(
-                        title: 'Important Notes',
-                        icon: Icons.info_outline,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: widget.data.importantNotes
-                              .map(
-                                (n) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 2,
-                                  ),
-                                  child: Text(
-                                    '• $n',
-                                    style: GoogleFonts.montserrat(
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ),
-                              )
-                              .toList(),
+                                )
+                                .toList(),
+                          ),
                         ),
                       ),
                     ],
@@ -514,35 +673,55 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
             child: SafeArea(
               minimum: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Colors.black.withOpacity(0.08),
-                    border: Border.all(color: Colors.black12),
-                  ),
-                  padding: const EdgeInsets.all(8),
-                  child: SizedBox(
-                    width: 360,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const PhoneScreen(),
+                child: SlideInUp(
+                  duration: const Duration(milliseconds: 800),
+                  delay: const Duration(milliseconds: 200),
+                  child: Pulse(
+                    duration: const Duration(seconds: 2),
+                    infinite: true,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.black.withOpacity(0.1),
+                        border: Border.all(color: Colors.white24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.yellow.withOpacity(0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
                           ),
-                        );
-                      },
-                      icon: const Icon(Icons.app_registration),
-                      label: const Text('Register Now'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.yellow[800],
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 16,
-                        ),
-                        textStyle: const TextStyle(fontWeight: FontWeight.w800),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: SizedBox(
+                        width: 360,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const PhoneScreen(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.app_registration),
+                          label: const Text('Register Now'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.yellow[700],
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 18,
+                            ),
+                            textStyle: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 8,
+                            shadowColor: Colors.yellow.withOpacity(0.5),
+                          ),
                         ),
                       ),
                     ),
@@ -661,6 +840,133 @@ class _CardBlock extends StatelessWidget {
               child,
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AwardItem extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String description;
+
+  const _AwardItem({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black87,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoItem extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String value;
+
+  const _InfoItem({
+    required this.icon,
+    required this.title,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: AppColors.accentCyan),
+        const SizedBox(width: 10),
+        Text(
+          '$title: ',
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: GoogleFonts.montserrat(color: Colors.black87),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HeroImageCard extends StatelessWidget {
+  final String imageAsset;
+  final String mode;
+  final double width;
+  final double height;
+
+  const _HeroImageCard({
+    required this.imageAsset,
+    required this.mode,
+    required this.width,
+    required this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: Image.asset(
+          imageAsset,
+          fit: BoxFit.cover,
+          filterQuality: FilterQuality.high,
+          alignment: Alignment.center,
         ),
       ),
     );
