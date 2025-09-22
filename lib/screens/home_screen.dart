@@ -1,9 +1,11 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:lottie/lottie.dart';
 import '../constants/app_colors.dart';
 import '../widgets/rules_dialog.dart';
 import '../widgets/glass_header.dart';
@@ -25,12 +27,16 @@ class _HomeScreenState extends State<HomeScreen> {
   // Controller for the bottom strip auto-scroll
   final ScrollController _stripCtrl = ScrollController();
   Timer? _stripTimer;
+  // Intro overlay
+  bool _showIntro = kIsWeb; // show on website entry
+  Timer? _introTimer;
 
   @override
   void dispose() {
     _stripTimer?.cancel();
     _stripCtrl.dispose();
     _pageController.dispose();
+    _introTimer?.cancel();
     super.dispose();
   }
 
@@ -101,8 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final double cardHeight = isShort ? 540 : (isWide ? 240 : 180);
     final double itemWidth = isWide ? 240 : 170; // show multiple at once
     final assets = [
-      'lib/assets/engineering.png',
-      'lib/assets/medical.png',
+      'lib/assets/eng.png',
+      'lib/assets/dr.png',
       'lib/assets/law.png',
       'lib/assets/arts.png',
     ];
@@ -117,12 +123,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Static cards for Section 3 (singing, photo, acting)
+  // Static cards for Section 3 (singing, photo, acting, dance) - 2x2 grid
   Widget _buildFeatureCards(bool isWide, bool isShort) {
-    // Slightly smaller on short/mobile screens to avoid vertical overflow
-    final double cardHeight = isShort ? 120 : (isWide ? 320 : 240);
-    final double cardWidth = isWide ? 360 : double.infinity;
-    final double gap = isWide ? 8 : 0;
+    // Reduced card heights for smaller category cards
+    final double cardHeight = isShort ? 100 : (isWide ? 200 : 120);
+    // Control card widths - adjust these values as needed
+    final double cardWidth = isShort ? 140 : (isWide ? 550 : 160);
+    final double gap = isWide ? 0 : 4;
 
     void openSinging() {
       final data = CategoryDetailData(
@@ -203,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
         MaterialPageRoute(
           builder: (_) => CategoryDetailScreen(
             data: data,
-            imageAsset: 'lib/assets/singing_card.png',
+            imageAsset: 'lib/assets/singing.png',
           ),
         ),
       );
@@ -252,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
         MaterialPageRoute(
           builder: (_) => CategoryDetailScreen(
             data: data,
-            imageAsset: 'lib/assets/acting_card.png',
+            imageAsset: 'lib/assets/acting.png',
           ),
         ),
       );
@@ -301,77 +308,124 @@ class _HomeScreenState extends State<HomeScreen> {
         MaterialPageRoute(
           builder: (_) => CategoryDetailScreen(
             data: data,
-            imageAsset: 'lib/assets/photo_card.png',
+            imageAsset: 'lib/assets/photography.png',
           ),
         ),
       );
     }
 
-    if (isWide) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: cardWidth,
-            child: GestureDetector(
-              onTap: openSinging,
-              child: _Section3Card(
-                asset: 'lib/assets/singing_card.png',
-                height: cardHeight,
-              ),
-            ),
-          ),
-          SizedBox(width: gap),
-          SizedBox(
-            width: cardWidth,
-            child: GestureDetector(
-              onTap: openPhoto,
-              child: _Section3Card(
-                asset: 'lib/assets/photo_card.png',
-                height: cardHeight,
-              ),
-            ),
-          ),
-          SizedBox(width: gap),
-          SizedBox(
-            width: cardWidth,
-            child: GestureDetector(
-              onTap: openActing,
-              child: _Section3Card(
-                asset: 'lib/assets/acting_card.png',
-                height: cardHeight,
-              ),
-            ),
-          ),
+    void openDance() {
+      final data = CategoryDetailData(
+        categoryName: 'Dance',
+        mode: '100% Online',
+        participants: 'College students across Tamil Nadu',
+        timeline: '30 Days',
+        entryFormat: const EntryFormat(
+          type: 'Solo/Group Dance',
+          duration: 'Maximum 3 minutes per performance',
+          language: '-',
+          style: 'Classical, Folk, or Contemporary',
+          submissionFormat: 'Video',
+        ),
+        rules: const [
+          'One Entry Per Participant',
+          'Original choreography preferred',
+          'No explicit or inappropriate content',
+          'Traditional or contemporary styles allowed',
         ],
+        judgingCriteria: const [
+          JudgingCriterion('Technique & Skills', 30),
+          JudgingCriterion('Choreography & Creativity', 25),
+          JudgingCriterion('Expression & Performance', 20),
+          JudgingCriterion('Costume & Presentation', 15),
+          JudgingCriterion('Overall Impact', 10),
+        ],
+        awards: const Awards(
+          winner: 'TBA',
+          runnerUp: 'TBA',
+          audienceChoice: 'TBA',
+          topCollege: 'TBA',
+        ),
+        voting: Voting(
+          deadline: DateTime(2025, 11, 5, 23, 59, 59),
+          platform: 'College Thiruvizha Website',
+          notes: 'One vote per entry per user',
+        ),
+        juryPanel: const [
+          'Professional Dancers',
+          'Choreographers',
+          'Cultural Experts',
+        ],
+        importantNotes: const ['Details to be announced.'],
+      );
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => CategoryDetailScreen(
+            data: data,
+            imageAsset: 'lib/assets/dance.png',
+          ),
+        ),
       );
     }
 
+    // 2x2 Grid layout with controlled card widths
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        GestureDetector(
-          onTap: openSinging,
-          child: _Section3Card(
-            asset: 'lib/assets/singing_card.png',
-            height: cardHeight,
-          ),
+        // First row: Singing and Photography
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(
+              width: cardWidth,
+              child: GestureDetector(
+                onTap: openSinging,
+                child: _Section3Card(
+                  asset: 'lib/assets/singing.png',
+                  height: cardHeight,
+                ),
+              ),
+            ),
+            SizedBox(width: gap),
+            SizedBox(
+              width: cardWidth,
+              child: GestureDetector(
+                onTap: openPhoto,
+                child: _Section3Card(
+                  asset: 'lib/assets/photography.png',
+                  height: cardHeight,
+                ),
+              ),
+            ),
+          ],
         ),
         SizedBox(height: gap),
-        GestureDetector(
-          onTap: openPhoto,
-          child: _Section3Card(
-            asset: 'lib/assets/photo_card.png',
-            height: cardHeight,
-          ),
-        ),
-        SizedBox(height: gap),
-        GestureDetector(
-          onTap: openActing,
-          child: _Section3Card(
-            asset: 'lib/assets/acting_card.png',
-            height: cardHeight,
-          ),
+        // Second row: Acting and Dance
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(
+              width: cardWidth,
+              child: GestureDetector(
+                onTap: openActing,
+                child: _Section3Card(
+                  asset: 'lib/assets/acting.png',
+                  height: cardHeight,
+                ),
+              ),
+            ),
+            SizedBox(width: gap),
+            SizedBox(
+              width: cardWidth,
+              child: GestureDetector(
+                onTap: openDance,
+                child: _Section3Card(
+                  asset: 'lib/assets/dance.png',
+                  height: cardHeight,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -385,57 +439,60 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     // no-op
     return Scaffold(
+      backgroundColor: Colors.black,
+      extendBody: true,
       extendBodyBehindAppBar: true,
       appBar: const GlassHeader(),
       body: Stack(
         children: [
-          // Main background - bg.jpg image
+          // Main background - homepage.jpg for Section 1, bg.jpg for others
           Positioned.fill(
             child: Image.asset(
-              'lib/assets/bg.jpg',
+              _bgIndex == 0 ? 'lib/assets/homepage.jpg' : 'lib/assets/bg.jpg',
               fit: BoxFit.cover,
               filterQuality: FilterQuality.high,
+              alignment: Alignment.center,
             ),
           ),
           // Left decoration background
-          Positioned(
-            left: 0,
-            top: 0,
-            width: _bgIndex == 0 ? MediaQuery.of(context).size.width * 0.55 : 0,
-            height: _bgIndex == 0
-                ? MediaQuery.of(context).size.height * 0.55
-                : 0,
-            child: FadeInLeft(
-              duration: const Duration(milliseconds: 1000),
-              child: Image.asset(
-                'lib/assets/Left-decoration-1024x751.png',
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-                filterQuality: FilterQuality.high,
-              ),
-            ),
-          ),
-          // Right decoration background
-          Positioned(
-            right: 0,
-            top: 0,
-            width: _bgIndex == 0 ? MediaQuery.of(context).size.width * 0.55 : 0,
-            height: _bgIndex == 0
-                ? MediaQuery.of(context).size.height * 0.55
-                : 0,
-            child: FadeInRight(
-              duration: const Duration(milliseconds: 1000),
-              child: Image.asset(
-                'lib/assets/Right-decoration-1024x751.png',
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-                filterQuality: FilterQuality.high,
-              ),
-            ),
-          ),
-          // Top marquee bar (running words)
+          // Positioned(
+          //   left: 0,
+          //   top: 0,
+          //   width: _bgIndex == 0 ? MediaQuery.of(context).size.width * 0.55 : 0,
+          //   height: _bgIndex == 0
+          //       ? MediaQuery.of(context).size.height * 0.55
+          //       : 0,
+          //   child: FadeInLeft(
+          //     duration: const Duration(milliseconds: 1000),
+          //     child: Image.asset(
+          //       'lib/assets/Left-decoration-1024x751.png',
+          //       fit: BoxFit.cover,
+          //       width: double.infinity,
+          //       height: double.infinity,
+          //       filterQuality: FilterQuality.high,
+          //     ),
+          //   ),
+          // ),
+          // // Right decoration background
+          // Positioned(
+          //   right: 0,
+          //   top: 0,
+          //   width: _bgIndex == 0 ? MediaQuery.of(context).size.width * 0.55 : 0,
+          //   height: _bgIndex == 0
+          //       ? MediaQuery.of(context).size.height * 0.55
+          //       : 0,
+          //   child: FadeInRight(
+          //     duration: const Duration(milliseconds: 1000),
+          //     child: Image.asset(
+          //       'lib/assets/Right-decoration-1024x751.png',
+          //       fit: BoxFit.cover,
+          //       width: double.infinity,
+          //       height: double.infinity,
+          //       filterQuality: FilterQuality.high,
+          //     ),
+          //   ),
+          // ),
+          // // Top marquee bar (running words)
           // Positioned(
           //   left: 0,
           //   right: 0,
@@ -497,15 +554,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     // 2X.png card (background)
                                     Positioned(
                                       child: Image.asset(
-                                        'lib/assets/2X.png',
+                                        'lib/assets/logo.png',
                                         fit: BoxFit.contain,
                                         height: isWide
-                                            ? 400
+                                            ? 350
                                             : MediaQuery.of(
                                                     context,
                                                   ).size.width <
                                                   600
-                                            ? 260
+                                            ? 200
                                             : 200,
                                         filterQuality: FilterQuality.high,
                                       ),
@@ -532,9 +589,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               // SizedBox(height: isShort ? 8 : 16),
                               Transform.translate(
-                                offset: const Offset(0, -64),
+                                offset: const Offset(0, -34),
                                 child: _CountdownBand(
-                                  target: DateTime(2025, 10, 9),
+                                  target: DateTime(2025, 11, 5),
                                   darkOnLight: false,
                                 ),
                               ),
@@ -721,7 +778,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SectionText(
                                   'Rhythm & Waves Fest is a celebration of music, performance, and creativity.\n',
                                 ),
-                                const SizedBox(height: 8),
+                                // const SizedBox(height: 8),
                               ],
                             );
                             final cardsWide = _buildFeatureCards(
@@ -730,9 +787,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                             // On mobile/narrow screens, keep header fixed and show a horizontal auto carousel for the cards
                             if (!isWide) {
-                              final double cardH = isShort ? 120 : 240;
+                              final double cardH = isShort ? 100 : 180;
                               final double itemW = (constraints.maxWidth - 64)
-                                  .clamp(220.0, 480.0);
+                                  .clamp(240.0, 560.0);
 
                               // Local open handlers (same as in _buildFeatureCards)
                               void openSinging() {
@@ -828,7 +885,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   MaterialPageRoute(
                                     builder: (_) => CategoryDetailScreen(
                                       data: data,
-                                      imageAsset: 'lib/assets/singing_card.png',
+                                      imageAsset: 'lib/assets/singing.png',
                                     ),
                                   ),
                                 );
@@ -883,7 +940,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   MaterialPageRoute(
                                     builder: (_) => CategoryDetailScreen(
                                       data: data,
-                                      imageAsset: 'lib/assets/photo_card.png',
+                                      imageAsset: 'lib/assets/photography.png',
                                     ),
                                   ),
                                 );
@@ -946,7 +1003,74 @@ class _HomeScreenState extends State<HomeScreen> {
                                   MaterialPageRoute(
                                     builder: (_) => CategoryDetailScreen(
                                       data: data,
-                                      imageAsset: 'lib/assets/acting_card.png',
+                                      imageAsset: 'lib/assets/acting.png',
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              void openDance() {
+                                final data = CategoryDetailData(
+                                  categoryName: 'Dance',
+                                  mode: '100% Online',
+                                  participants:
+                                      'College students across Tamil Nadu',
+                                  timeline: '30 Days',
+                                  entryFormat: const EntryFormat(
+                                    type: 'Solo/Group Dance',
+                                    duration:
+                                        'Maximum 3 minutes per performance',
+                                    language: '-',
+                                    style: 'Classical, Folk, or Contemporary',
+                                    submissionFormat: 'Video',
+                                  ),
+                                  rules: const [
+                                    'One Entry Per Participant',
+                                    'Original choreography preferred',
+                                    'No explicit or inappropriate content',
+                                    'Traditional or contemporary styles allowed',
+                                  ],
+                                  judgingCriteria: const [
+                                    JudgingCriterion('Technique & Skills', 30),
+                                    JudgingCriterion(
+                                      'Choreography & Creativity',
+                                      25,
+                                    ),
+                                    JudgingCriterion(
+                                      'Expression & Performance',
+                                      20,
+                                    ),
+                                    JudgingCriterion(
+                                      'Costume & Presentation',
+                                      15,
+                                    ),
+                                    JudgingCriterion('Overall Impact', 10),
+                                  ],
+                                  awards: const Awards(
+                                    winner: 'TBA',
+                                    runnerUp: 'TBA',
+                                    audienceChoice: 'TBA',
+                                    topCollege: 'TBA',
+                                  ),
+                                  voting: Voting(
+                                    deadline: DateTime(2025, 11, 5, 23, 59, 59),
+                                    platform: 'College Thiruvizha Website',
+                                    notes: 'One vote per entry per user',
+                                  ),
+                                  juryPanel: const [
+                                    'Professional Dancers',
+                                    'Choreographers',
+                                    'Cultural Experts',
+                                  ],
+                                  importantNotes: const [
+                                    'Details to be announced.',
+                                  ],
+                                );
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => CategoryDetailScreen(
+                                      data: data,
+                                      imageAsset: 'lib/assets/dance.png',
                                     ),
                                   ),
                                 );
@@ -954,19 +1078,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               final items = [
                                 _CategoryCardSpec(
-                                  'lib/assets/singing_card.png',
+                                  'lib/assets/singing.png',
                                   cardH,
                                   openSinging,
                                 ),
                                 _CategoryCardSpec(
-                                  'lib/assets/photo_card.png',
+                                  'lib/assets/photography.png',
                                   cardH,
                                   openPhoto,
                                 ),
                                 _CategoryCardSpec(
-                                  'lib/assets/acting_card.png',
+                                  'lib/assets/acting.png',
                                   cardH,
                                   openActing,
+                                ),
+                                _CategoryCardSpec(
+                                  'lib/assets/dance.png',
+                                  cardH,
+                                  openDance,
                                 ),
                               ];
 
@@ -975,22 +1104,42 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   header,
                                   const SizedBox(height: 8),
-                                  SizedBox(
-                                    height: cardH,
-                                    child: _AutoHorizontalCategoryCards(
-                                      height: cardH,
-                                      itemWidth: itemW,
-                                      speed: 3.0,
-                                      items: items,
-                                    ),
+                                  Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: cardH,
+                                        child: _AutoHorizontalCategoryCards(
+                                          height: cardH,
+                                          itemWidth: itemW,
+                                          speed: 3.0,
+                                          items: items,
+                                        ),
+                                      ),
+
+                                      // Swipe left Lottie animation aligned to the right
+                                    ],
                                   ),
                                   const SizedBox(height: 8),
+
                                   Text(
                                     'Tap a card to know more',
                                     style: GoogleFonts.montserrat(
                                       color: Colors.white70,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Container(
+                                    // top: 95,
+                                    // right: 56,
+                                    alignment: Alignment.centerRight,
+                                    child: Lottie.asset(
+                                      'lib/assets/swipe left.json',
+                                      width: 160,
+                                      height: 160,
+                                      fit: BoxFit.contain,
+                                      repeat: true,
                                     ),
                                   ),
                                 ],
@@ -1233,104 +1382,282 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
 
-                // Section 8: Stay Connected & Contact
+                // Section 8: Stay in Touch (two-card layout + newsletter)
                 LayoutBuilder(
                   builder: (context, constraints) {
-                    final isWide = constraints.maxWidth >= 900;
+                    final isWide = constraints.maxWidth >= 1000;
                     final h = constraints.maxHeight;
                     final isShort = h < 640;
                     final bottomPad = isWide
-                        ? (isShort ? 80.0 : 160.0)
+                        ? (isShort ? 50.0 : 50.0)
                         : (isShort ? 64.0 : 120.0);
-                    final iconSize = isWide ? 28.0 : 24.0;
 
-                    Widget circleIcon(IconData icon, Color bg) {
-                      return Container(
-                        width: iconSize + 20,
-                        height: iconSize + 20,
-                        decoration: BoxDecoration(
-                          color: bg.withOpacity(0.12),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: bg.withOpacity(0.3)),
+                    TextStyle titleStyle(Color color) => GoogleFonts.montserrat(
+                      color: color,
+                      fontSize: isWide ? 28 : 22,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.5,
+                    );
+                    TextStyle linkStyle(Color color) => GoogleFonts.montserrat(
+                      color: color,
+                      fontSize: isWide ? 16 : 14,
+                      fontWeight: FontWeight.w700,
+                    );
+
+                    Widget link(String text, {Color color = Colors.white}) {
+                      return Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton(
+                          onPressed: () {},
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 0,
+                              vertical: 6,
+                            ),
+                            foregroundColor: color,
+                          ),
+                          child: Text(text, style: linkStyle(color)),
                         ),
-                        child: Icon(icon, color: Colors.white, size: iconSize),
                       );
                     }
+
+                    Widget card({
+                      required Color color,
+                      required Widget child,
+                      bool darkText = false,
+                    }) {
+                      return Container(
+                        padding: EdgeInsets.all(isWide ? 24 : 16),
+                        decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(22),
+                        ),
+                        child: child,
+                      );
+                    }
+
+                    final leftCard = card(
+                      color: const Color(0xFFFF2C6B), // vibrant pink
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'College Thiruvizha',
+                            style: titleStyle(Colors.white),
+                          ),
+                          const SizedBox(height: 10),
+                          // link('Filmmaking'),
+                          link('Music'),
+                          link('Photography'),
+                          link('Dance'),
+                          link('Acting'),
+                          // link('Performing Arts'),
+                        ],
+                      ),
+                    );
+
+                    final rightCard = card(
+                      color: const Color(0xFF20D9D2), // teal
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Brand Solutions',
+                            style: titleStyle(Colors.black),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Creating culture shaping campaigns for leading brands',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w600,
+                              fontSize: isWide ? 14 : 12,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          link('Explore ↗', color: Colors.black),
+                          const SizedBox(height: 16),
+                          Text('On Social', style: titleStyle(Colors.black)),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: [
+                              Chip(
+                                label: const Text('Instagram'),
+                                backgroundColor: Colors.white,
+                                labelStyle: GoogleFonts.montserrat(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Chip(
+                                label: const Text('Facebook'),
+                                backgroundColor: Colors.white,
+                                labelStyle: GoogleFonts.montserrat(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Chip(
+                                label: const Text('X / Twitter'),
+                                backgroundColor: Colors.white,
+                                labelStyle: GoogleFonts.montserrat(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Text('Newsletter', style: titleStyle(Colors.black)),
+                          // const SizedBox(height: 8),
+                          // Row(
+                          //   children: [
+                          //     Expanded(
+                          //       child: TextField(
+                          //         keyboardType: TextInputType.emailAddress,
+                          //         decoration: InputDecoration(
+                          //           hintText: 'Email Address',
+                          //           filled: true,
+                          //           fillColor: Colors.white,
+                          //           contentPadding: const EdgeInsets.symmetric(
+                          //             horizontal: 14,
+                          //             vertical: 14,
+                          //           ),
+                          //           border: OutlineInputBorder(
+                          //             borderRadius: BorderRadius.circular(12),
+                          //             borderSide: BorderSide.none,
+                          //           ),
+                          //         ),
+                          //         style: GoogleFonts.montserrat(
+                          //           color: Colors.black,
+                          //           fontWeight: FontWeight.w600,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     const SizedBox(width: 10),
+                          //     ElevatedButton(
+                          //       onPressed: () {
+                          //         ScaffoldMessenger.of(context).showSnackBar(
+                          //           const SnackBar(
+                          //             content: Text('Subscribed!'),
+                          //             behavior: SnackBarBehavior.floating,
+                          //           ),
+                          //         );
+                          //       },
+                          //       style: ElevatedButton.styleFrom(
+                          //         backgroundColor: Colors.orangeAccent,
+                          //         foregroundColor: Colors.black,
+                          //         padding: const EdgeInsets.symmetric(
+                          //           horizontal: 18,
+                          //           vertical: 14,
+                          //         ),
+                          //         shape: RoundedRectangleBorder(
+                          //           borderRadius: BorderRadius.circular(10),
+                          //         ),
+                          //       ),
+                          //       child: Text(
+                          //         'SUBSCRIBE',
+                          //         style: GoogleFonts.montserrat(
+                          //           fontWeight: FontWeight.w900,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                        ],
+                      ),
+                    );
+
+                    final cards = isWide
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: leftCard),
+                              const SizedBox(width: 20),
+                              Expanded(child: rightCard),
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              leftCard,
+                              const SizedBox(height: 14),
+                              rightCard,
+                            ],
+                          );
+
+                    // // Bottom dark panel with logo/tagline
+                    // final bottomPanel = Container(
+                    //   padding: EdgeInsets.all(isWide ? 24 : 16),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.black,
+                    //     borderRadius: BorderRadius.circular(18),
+                    //     border: Border.all(color: Colors.white10),
+                    //   ),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     crossAxisAlignment: CrossAxisAlignment.center,
+                    //     children: [
+                    //       Row(
+                    //         mainAxisSize: MainAxisSize.min,
+                    //         children: [
+                    //           Image.asset(
+                    //             'lib/assets/logo.png',
+                    //             height: isWide ? 36 : 28,
+                    //             filterQuality: FilterQuality.high,
+                    //           ),
+                    //           const SizedBox(width: 10),
+                    //           Text(
+                    //             'Shaping Culture One Day at a Time',
+                    //             style: GoogleFonts.montserrat(
+                    //               color: Colors.white,
+                    //               fontWeight: FontWeight.w700,
+                    //               fontSize: isWide ? 16 : 13,
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       if (isWide)
+                    //         Text(
+                    //           '© ${DateTime.now().year} College Thiruvizha',
+                    //           style: GoogleFonts.montserrat(
+                    //             color: Colors.white70,
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //         ),
+                    //     ],
+                    //   ),
+                    // );
 
                     return Padding(
                       padding: EdgeInsets.fromLTRB(16, 16, 16, bottomPad),
                       child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            FadeInDown(
-                              duration: const Duration(milliseconds: 650),
-                              child: SectionTitle('STAY CONNECTED'),
-                            ),
-                            const SizedBox(height: 14),
-                            FadeInUp(
-                              duration: const Duration(milliseconds: 650),
-                              delay: const Duration(milliseconds: 100),
-                              child: Wrap(
-                                spacing: 14,
-                                runSpacing: 10,
-                                alignment: WrapAlignment.center,
-                                children: [
-                                  circleIcon(
-                                    Icons.camera_alt,
-                                    Colors.purple,
-                                  ), // Instagram
-                                  circleIcon(
-                                    Icons.facebook,
-                                    Colors.blue,
-                                  ), // Facebook
-                                  circleIcon(
-                                    Icons.alternate_email,
-                                    Colors.cyan,
-                                  ), // Twitter/X
-                                ],
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 1200),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              FadeInDown(
+                                duration: const Duration(milliseconds: 600),
+                                child: SectionTitle('STAY IN TOUCH'),
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                            FadeInUp(
-                              duration: const Duration(milliseconds: 650),
-                              delay: const Duration(milliseconds: 160),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SectionText('Have any questions?'),
-                                  const SizedBox(height: 10),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      // TODO: Hook to contact action (email/whatsapp)
-                                    },
-                                    icon: const Icon(
-                                      Icons.mail,
-                                      color: Colors.black,
-                                    ),
-                                    label: const Text(
-                                      'Contact Us',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.yellow,
-                                      foregroundColor: Colors.black,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 22,
-                                        vertical: 14,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              const SizedBox(height: 16),
+                              FadeInUp(
+                                duration: const Duration(milliseconds: 700),
+                                child: cards,
                               ),
-                            ),
-                          ],
+                              // const SizedBox(height: 16),
+                              // FadeInUp(
+                              //   duration: const Duration(milliseconds: 700),
+                              //   delay: const Duration(milliseconds: 80),
+                              //   child: bottomPanel,
+                              // ),
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -1352,7 +1679,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _BottomLoopingImageStrip(
                   controller: _stripCtrl,
                   onTickAttach: (timer) => _stripTimer = timer,
-                  height: 600,
+                  height: 400,
                   imageAssetPath: 'lib/assets/caro_chennai_new.png',
                   overlayGradient: const LinearGradient(
                     begin: Alignment.topCenter,
@@ -1634,6 +1961,42 @@ class _HomeScreenState extends State<HomeScreen> {
           //     ),
           //   ),
           // ),
+
+          // Full-screen Lottie intro overlay (web entry)
+          if (_showIntro)
+            Positioned.fill(
+              child: AbsorbPointer(
+                absorbing: true,
+                child: Container(
+                  color: Colors.black.withOpacity(0.0),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isMobile = constraints.maxWidth < 600;
+                      return Center(
+                        child: Lottie.asset(
+                          'lib/assets/Grand opening.json',
+                          width: isMobile
+                              ? constraints.maxWidth
+                              : constraints.maxWidth,
+                          height: isMobile
+                              ? constraints.maxHeight
+                              : constraints.maxHeight,
+                          fit: isMobile ? BoxFit.cover : BoxFit.cover,
+                          alignment: Alignment.center,
+                          repeat: false,
+                          onLoaded: (composition) {
+                            _introTimer?.cancel();
+                            _introTimer = Timer(composition.duration, () {
+                              if (mounted) setState(() => _showIntro = false);
+                            });
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -2038,6 +2401,7 @@ class _Section3Card extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: SizedBox(
         height: height,
+        width: height * 10,
         child: Image.asset(
           asset,
           fit: BoxFit.cover,
@@ -2177,6 +2541,7 @@ class _AutoHorizontalCategoryCardsState
   bool _userInteracting = false;
   static const int _kLoopBase = 10000; // large base for infinite like behavior
   double _viewportFraction = 1.0;
+  double _currentPage = 0.0;
 
   @override
   void initState() {
@@ -2186,6 +2551,12 @@ class _AutoHorizontalCategoryCardsState
       initialPage: _kLoopBase * (widget.items.length),
       viewportFraction: _viewportFraction,
     );
+    // Track page for 3D effect
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page ?? _currentPage;
+      });
+    });
     _startAuto();
   }
 
@@ -2244,7 +2615,9 @@ class _AutoHorizontalCategoryCardsState
     return LayoutBuilder(
       builder: (context, constraints) {
         final maxW = constraints.maxWidth;
-        final fraction = (widget.itemWidth / maxW).clamp(0.5, 1.0);
+        // Force a peeking layout so next/prev cards are visible
+        final rawFraction = (widget.itemWidth / maxW);
+        final fraction = rawFraction.clamp(0.72, 0.9);
         // Recreate controller if fraction changed
         if ((fraction - _viewportFraction).abs() > 0.001) {
           final currentPage = _pageController.hasClients
@@ -2256,6 +2629,11 @@ class _AutoHorizontalCategoryCardsState
             initialPage: currentPage,
             viewportFraction: _viewportFraction,
           );
+          _pageController.addListener(() {
+            setState(() {
+              _currentPage = _pageController.page ?? _currentPage;
+            });
+          });
           // Restart auto timer to use the new controller
           if (!_userInteracting) {
             _startAuto();
@@ -2270,6 +2648,7 @@ class _AutoHorizontalCategoryCardsState
           onPointerUp: (_) => _scheduleResume(),
           onPointerCancel: (_) => _scheduleResume(),
           child: PageView.builder(
+            clipBehavior: Clip.none,
             controller: _pageController,
             onPageChanged: (_) {
               // Keep primary controller in sync if needed
@@ -2277,16 +2656,48 @@ class _AutoHorizontalCategoryCardsState
             },
             itemBuilder: (_, index) {
               final it = widget.items[index % widget.items.length];
+              final page = _currentPage;
+              final offset = (index - page).toDouble();
+              final clamped = offset.clamp(-2.0, 2.0);
+              final scale =
+                  1.0 - (clamped.abs() * 0.08); // gentle shrink on sides
+              final rotationY = clamped * 0.45; // stronger 3D turn
+              final depth = 0.0018; // perspective depth
+              final translateX = clamped * -28.0; // curve towards center
+              final widen =
+                  2.08 +
+                  (0.04 *
+                      (1.0 - clamped.abs()).clamp(
+                        0.0,
+                        1.0,
+                      )); // center a bit wider
+
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: it.onTap,
                   child: Center(
-                    child: SizedBox(
-                      height: widget.height,
-                      width: widget.itemWidth,
-                      child: _Section3Card(asset: it.asset, height: it.height),
+                    child: Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.identity()
+                        ..setEntry(3, 2, depth)
+                        ..translate(translateX)
+                        ..rotateY(rotationY)
+                        ..scale(scale, scale),
+                      child: OverflowBox(
+                        maxWidth: widget.itemWidth * 1.25,
+                        minWidth: 0,
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          height: widget.height,
+                          width: widget.itemWidth * widen,
+                          child: _Section3Card(
+                            asset: it.asset,
+                            height: it.height,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
