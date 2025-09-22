@@ -10,6 +10,15 @@ import '../widgets/glass_header.dart';
 import '../widgets/parallax_section.dart';
 import 'registration/phone_screen.dart';
 import 'category_detail_screen.dart';
+import 'home/widgets/auto_scroll_text_strip.dart';
+import 'home/widgets/auto_scroll_card_strip.dart';
+import 'home/widgets/bottom_looping_image_strip.dart';
+import 'home/widgets/menu_pill.dart';
+import 'home/widgets/section3_card.dart';
+import 'home/widgets/info_pill.dart';
+import 'home/widgets/auto_horizontal_category_cards.dart';
+import 'home/widgets/countdown_band.dart';
+import 'home/widgets/sponsors_strip.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -61,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // Top thin strip
         FadeInLeft(
           duration: const Duration(milliseconds: 800),
-          child: _AutoScrollTextStrip(
+          child: AutoScrollTextStrip(
             height: isShort ? 30 : 38,
             background: Colors.black.withOpacity(0.0),
             textStyle: topStyle,
@@ -80,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
           duration: const Duration(milliseconds: 800),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: _AutoScrollTextStrip(
+            child: AutoScrollTextStrip(
               height: isShort ? 42 : 50,
               background: Colors.yellow,
               textStyle: bottomStyle,
@@ -106,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'lib/assets/law.png',
       'lib/assets/arts.png',
     ];
-    return _AutoScrollCardStrip(
+    return AutoScrollCardStrip(
       height: cardHeight,
       itemWidth: itemWidth,
       itemCount: assets.length,
@@ -315,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
             width: cardWidth,
             child: GestureDetector(
               onTap: openSinging,
-              child: _Section3Card(
+              child: Section3Card(
                 asset: 'lib/assets/singing_card.png',
                 height: cardHeight,
               ),
@@ -326,7 +335,7 @@ class _HomeScreenState extends State<HomeScreen> {
             width: cardWidth,
             child: GestureDetector(
               onTap: openPhoto,
-              child: _Section3Card(
+              child: Section3Card(
                 asset: 'lib/assets/photo_card.png',
                 height: cardHeight,
               ),
@@ -337,7 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
             width: cardWidth,
             child: GestureDetector(
               onTap: openActing,
-              child: _Section3Card(
+              child: Section3Card(
                 asset: 'lib/assets/acting_card.png',
                 height: cardHeight,
               ),
@@ -352,7 +361,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         GestureDetector(
           onTap: openSinging,
-          child: _Section3Card(
+          child: Section3Card(
             asset: 'lib/assets/singing_card.png',
             height: cardHeight,
           ),
@@ -360,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(height: gap),
         GestureDetector(
           onTap: openPhoto,
-          child: _Section3Card(
+          child: Section3Card(
             asset: 'lib/assets/photo_card.png',
             height: cardHeight,
           ),
@@ -368,7 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(height: gap),
         GestureDetector(
           onTap: openActing,
-          child: _Section3Card(
+          child: Section3Card(
             asset: 'lib/assets/acting_card.png',
             height: cardHeight,
           ),
@@ -533,7 +542,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               // SizedBox(height: isShort ? 8 : 16),
                               Transform.translate(
                                 offset: const Offset(0, -64),
-                                child: _CountdownBand(
+                                child: CountdownBand(
                                   target: DateTime(2025, 10, 9),
                                   darkOnLight: false,
                                 ),
@@ -953,17 +962,17 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
 
                               final items = [
-                                _CategoryCardSpec(
+                                CategoryCardSpec(
                                   'lib/assets/singing_card.png',
                                   cardH,
                                   openSinging,
                                 ),
-                                _CategoryCardSpec(
+                                CategoryCardSpec(
                                   'lib/assets/photo_card.png',
                                   cardH,
                                   openPhoto,
                                 ),
-                                _CategoryCardSpec(
+                                CategoryCardSpec(
                                   'lib/assets/acting_card.png',
                                   cardH,
                                   openActing,
@@ -977,7 +986,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   const SizedBox(height: 8),
                                   SizedBox(
                                     height: cardH,
-                                    child: _AutoHorizontalCategoryCards(
+                                    child: AutoHorizontalCategoryCards(
                                       height: cardH,
                                       itemWidth: itemW,
                                       speed: 3.0,
@@ -1039,7 +1048,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     final itemWidth = isWide ? 240.0 : 200.0;
 
                     Widget row({required bool reverse, required double speed}) {
-                      return _AutoScrollCardStrip(
+                      return AutoScrollCardStrip(
                         height: rowHeight,
                         itemWidth: itemWidth,
                         itemCount: ctEventsAssets.length,
@@ -1153,15 +1162,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   spacing: 10,
                                   runSpacing: 10,
                                   children: [
-                                    _InfoPill(
+                                    InfoPill(
                                       icon: Icons.music_note,
                                       label: 'Music & Performance',
                                     ),
-                                    _InfoPill(
+                                    InfoPill(
                                       icon: Icons.camera_alt,
                                       label: 'Photo & Visuals',
                                     ),
-                                    _InfoPill(
+                                    InfoPill(
                                       icon: Icons.people_alt,
                                       label: 'Community & Collaboration',
                                     ),
@@ -1213,7 +1222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(height: 20),
                             FadeInUp(
                               duration: const Duration(milliseconds: 700),
-                              child: _AutoScrollCardStrip(
+                              child: AutoScrollCardStrip(
                                 height: rowHeight,
                                 itemWidth: itemWidth,
                                 itemCount: sponsorAssets.length,
@@ -1349,7 +1358,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 300),
                 opacity: _bgIndex == 0 ? 1.0 : 0.0,
-                child: _BottomLoopingImageStrip(
+                child: BottomLoopingImageStrip(
                   controller: _stripCtrl,
                   onTickAttach: (timer) => _stripTimer = timer,
                   height: 600,
@@ -1457,16 +1466,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Wrap(
                               spacing: 24,
                               children: [
-                                _MenuPill(
+                                MenuPill(
                                   'DATES',
                                   active: activeFooterIndex == 0,
                                 ),
-                                _MenuPill(
+                                MenuPill(
                                   'CATEGORIES',
                                   active: activeFooterIndex == 1,
                                 ),
-                                _MenuPill('JURY', active: false),
-                                _MenuPill(
+                                MenuPill('JURY', active: false),
+                                MenuPill(
                                   'PRIZES',
                                   active: activeFooterIndex == 2,
                                 ),
@@ -1641,846 +1650,9 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 // A lightweight, reusable horizontally auto-scrolling text strip.
-class _AutoScrollTextStrip extends StatefulWidget {
-  final double height;
-  final Color background;
-  final TextStyle textStyle;
-  final String text;
-  final String separator;
-  final bool reverse;
-  final double speed; // logical pixels per frame (~16ms)
-  final EdgeInsetsGeometry padding;
-
-  const _AutoScrollTextStrip({
-    required this.height,
-    required this.background,
-    required this.textStyle,
-    required this.text,
-    required this.separator,
-    required this.reverse,
-    required this.speed,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16),
-  });
-
-  @override
-  State<_AutoScrollTextStrip> createState() => _AutoScrollTextStripState();
-}
-
-class _AutoScrollTextStripState extends State<_AutoScrollTextStrip> {
-  final ScrollController _controller = ScrollController();
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 16), (_) {
-      if (!_controller.hasClients) return;
-      final max = _controller.position.maxScrollExtent;
-      final next = _controller.offset + widget.speed;
-      if (next >= max) {
-        _controller.jumpTo(0);
-      } else {
-        _controller.jumpTo(next);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Repeat the pattern many times to ensure continuous scrolling.
-    return SizedBox(
-      height: widget.height,
-      width: double.infinity,
-      child: Container(
-        color: widget.background,
-        child: ListView.builder(
-          controller: _controller,
-          scrollDirection: Axis.horizontal,
-          reverse: widget.reverse,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: 500,
-          itemBuilder: (_, i) {
-            final isSep = i.isOdd;
-            final s = isSep ? widget.separator : widget.text;
-            return Padding(
-              padding: widget.padding,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(s, style: widget.textStyle),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
+// moved AutoScrollTextStrip to home/widgets/auto_scroll_text_strip.dart
 
 // Reusable continuous auto-scrolling card strip for carousels.
-class _AutoScrollCardStrip extends StatefulWidget {
-  final double height;
-  final double itemWidth;
-  final int itemCount;
-  final List<String>? assets;
-  final double radius;
-  final EdgeInsetsGeometry itemMargin;
-  final double speed; // pixels per frame
-  final bool reverse; // scroll in opposite direction
-  final bool enableHover; // enable hover scale effect (web/desktop)
-  final double hoverScale;
-  final Duration hoverDuration;
+// moved AutoScrollCardStrip and HoverableImageCard to home/widgets/auto_scroll_card_strip.dart
 
-  const _AutoScrollCardStrip({
-    required this.height,
-    required this.itemWidth,
-    required this.itemCount,
-    this.assets,
-    required this.radius,
-    required this.itemMargin,
-    required this.speed,
-    this.reverse = false,
-    this.enableHover = false,
-    this.hoverScale = 1.04,
-    this.hoverDuration = const Duration(milliseconds: 180),
-  });
-
-  @override
-  State<_AutoScrollCardStrip> createState() => _AutoScrollCardStripState();
-}
-
-class _AutoScrollCardStripState extends State<_AutoScrollCardStrip> {
-  final ScrollController _ctrl = ScrollController();
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 16), (_) {
-      if (!_ctrl.hasClients) return;
-      final max = _ctrl.position.maxScrollExtent;
-      final delta = widget.reverse ? -widget.speed : widget.speed;
-      final next = _ctrl.offset + delta;
-      if (next >= max) {
-        _ctrl.jumpTo(0);
-      } else if (next <= 0) {
-        _ctrl.jumpTo(max);
-      } else {
-        _ctrl.jumpTo(next);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final baseCount = (widget.assets != null && widget.assets!.isNotEmpty)
-        ? widget.assets!.length
-        : widget.itemCount;
-    final totalItems = baseCount * 50; // long loop
-    return SizedBox(
-      height: widget.height,
-      child: ListView.builder(
-        controller: _ctrl,
-        scrollDirection: Axis.horizontal,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: totalItems,
-        itemBuilder: (_, i) {
-          // Always render same asset for now
-          return Container(
-            width: widget.itemWidth,
-            margin: widget.itemMargin,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(widget.radius),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: widget.enableHover
-                ? _HoverableImageCard(
-                    asset: widget.assets![i % widget.assets!.length],
-                    hoverScale: widget.hoverScale,
-                    duration: widget.hoverDuration,
-                  )
-                : Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.asset(
-                        widget.assets![i % widget.assets!.length],
-                        fit: BoxFit.cover,
-                        filterQuality: FilterQuality.high,
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: 60,
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.transparent, Colors.black54],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-// Hoverable image with gentle scale and bottom gradient overlay
-class _HoverableImageCard extends StatefulWidget {
-  final String asset;
-  final double hoverScale;
-  final Duration duration;
-  const _HoverableImageCard({
-    required this.asset,
-    required this.hoverScale,
-    required this.duration,
-  });
-
-  @override
-  State<_HoverableImageCard> createState() => _HoverableImageCardState();
-}
-
-class _HoverableImageCardState extends State<_HoverableImageCard> {
-  bool _hover = false;
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hover = true),
-      onExit: (_) => setState(() => _hover = false),
-      child: AnimatedScale(
-        scale: _hover ? widget.hoverScale : 1.0,
-        duration: widget.duration,
-        curve: Curves.easeOut,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.asset(
-              widget.asset,
-              fit: BoxFit.cover,
-              filterQuality: FilterQuality.high,
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: 60,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black54],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// A bottom-fixed strip that auto-scrolls a long rectangular image in a loop.
-class _BottomLoopingImageStrip extends StatefulWidget {
-  final ScrollController controller;
-  final void Function(Timer timer) onTickAttach;
-  final double height;
-  final String imageAssetPath;
-  final LinearGradient? overlayGradient;
-
-  const _BottomLoopingImageStrip({
-    required this.controller,
-    required this.onTickAttach,
-    required this.height,
-    required this.imageAssetPath,
-    this.overlayGradient,
-  });
-
-  @override
-  State<_BottomLoopingImageStrip> createState() =>
-      _BottomLoopingImageStripState();
-}
-
-class _BottomLoopingImageStripState extends State<_BottomLoopingImageStrip> {
-  late final ImageProvider _imageProvider;
-  bool _ready = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _imageProvider = AssetImage(widget.imageAssetPath);
-    // Precache the image to get its dimensions for tiling
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try {
-        await precacheImage(_imageProvider, context);
-      } catch (_) {}
-      if (!mounted) return;
-      setState(() => _ready = true);
-      // Start gentle auto-scroll
-      final t = Timer.periodic(const Duration(milliseconds: 16), (_) {
-        if (!widget.controller.hasClients) return;
-        final max = widget.controller.position.maxScrollExtent;
-        final next = widget.controller.offset + 0.6; // slow pan
-        if (next >= max) {
-          widget.controller.jumpTo(0);
-        } else {
-          widget.controller.jumpTo(next);
-        }
-      });
-      widget.onTickAttach(t);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_ready) {
-      return SizedBox(height: widget.height);
-    }
-    return SizedBox(
-      height: widget.height,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          ListView.builder(
-            controller: widget.controller,
-            scrollDirection: Axis.horizontal,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (_, i) =>
-                Image(image: _imageProvider, fit: BoxFit.cover),
-            itemCount: 1000, // plenty to allow continuous scroll
-          ),
-          if (widget.overlayGradient != null)
-            Container(
-              decoration: BoxDecoration(gradient: widget.overlayGradient),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-// removed unused _MenuText
-
-class _MenuPill extends StatelessWidget {
-  final String label;
-  final bool active;
-  const _MenuPill(this.label, {required this.active});
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = active ? Colors.yellow : Colors.transparent;
-    final fg = Colors.black;
-    final border = active ? Colors.black : Colors.black26;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: border, width: 1),
-      ),
-      child: Text(
-        label,
-        style: GoogleFonts.montserrat(
-          color: fg,
-          fontSize: 13,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 1.0,
-        ),
-      ),
-    );
-  }
-}
-
-// Simple image card used in Section 3
-class _Section3Card extends StatelessWidget {
-  final String asset;
-  final double height;
-  const _Section3Card({required this.asset, required this.height});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: SizedBox(
-        height: height,
-        child: Image.asset(
-          asset,
-          fit: BoxFit.cover,
-          filterQuality: FilterQuality.high,
-        ),
-      ),
-    );
-  }
-}
-
-// removed unused _MenuText and _InfoChip helpers to reduce analyzer noise
-
-// Small rounded info pill used in About Us section
-class _InfoPill extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  const _InfoPill({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Colors.white24),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: AppColors.accentCyan, size: 16),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: GoogleFonts.montserrat(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 12,
-              letterSpacing: 0.4,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Auto vertical scroller to avoid overflow on short screens, with gentle auto-scroll
-class _AutoVerticalScroller extends StatefulWidget {
-  final double height;
-  final double speed; // pixels per frame
-  final Widget child;
-  const _AutoVerticalScroller({
-    required this.height,
-    required this.speed,
-    required this.child,
-  });
-
-  @override
-  State<_AutoVerticalScroller> createState() => _AutoVerticalScrollerState();
-}
-
-class _AutoVerticalScrollerState extends State<_AutoVerticalScroller> {
-  final ScrollController _ctrl = ScrollController();
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 16), (_) {
-      if (!_ctrl.hasClients) return;
-      final max = _ctrl.position.maxScrollExtent;
-      if (max <= 0) return; // nothing to scroll
-      final next = _ctrl.offset + widget.speed;
-      if (next >= max) {
-        _ctrl.jumpTo(0);
-      } else {
-        _ctrl.jumpTo(next);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: widget.height,
-      child: SingleChildScrollView(
-        controller: _ctrl,
-        physics: const NeverScrollableScrollPhysics(),
-        child: widget.child,
-      ),
-    );
-  }
-}
-
-// Simple spec holder for category cards in mobile carousel
-class _CategoryCardSpec {
-  final String asset;
-  final double height;
-  final VoidCallback onTap;
-  const _CategoryCardSpec(this.asset, this.height, this.onTap);
-}
-
-// Auto horizontal scroller for category cards on mobile
-class _AutoHorizontalCategoryCards extends StatefulWidget {
-  final double height;
-  final double itemWidth;
-  // Back-compat: previously interpreted as pixels/frame for auto-scroll.
-  // Now used to derive default auto-advance interval if autoAdvanceEvery is null.
-  final double speed;
-  final List<_CategoryCardSpec> items;
-
-  const _AutoHorizontalCategoryCards({
-    required this.height,
-    required this.itemWidth,
-    required this.speed,
-    required this.items,
-  });
-
-  @override
-  State<_AutoHorizontalCategoryCards> createState() =>
-      _AutoHorizontalCategoryCardsState();
-}
-
-class _AutoHorizontalCategoryCardsState
-    extends State<_AutoHorizontalCategoryCards> {
-  late PageController _pageController;
-  Timer? _autoTimer;
-  Timer? _resumeTimer;
-  bool _userInteracting = false;
-  static const int _kLoopBase = 10000; // large base for infinite like behavior
-  double _viewportFraction = 1.0;
-
-  @override
-  void initState() {
-    super.initState();
-    // Start somewhere in the middle to allow both directions.
-    _pageController = PageController(
-      initialPage: _kLoopBase * (widget.items.length),
-      viewportFraction: _viewportFraction,
-    );
-    _startAuto();
-  }
-
-  @override
-  void dispose() {
-    _autoTimer?.cancel();
-    _resumeTimer?.cancel();
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  void _startAuto() {
-    _autoTimer?.cancel();
-    final interval = _deriveIntervalFromSpeed();
-    if (interval <= Duration.zero) return;
-    _autoTimer = Timer.periodic(interval, (_) {
-      if (!mounted || _userInteracting) return;
-      if (!_pageController.hasClients) return;
-      final current =
-          _pageController.page?.round() ?? _pageController.initialPage;
-      final next = current + 1;
-      _pageController.animateToPage(
-        next,
-        duration: const Duration(milliseconds: 450),
-        curve: Curves.easeOut,
-      );
-    });
-  }
-
-  Duration _deriveIntervalFromSpeed() {
-    // Treat previous "speed" as pixels per frame (~60fps). Compute seconds for one item.
-    // time(sec) = itemWidth / (speed * 60 px/sec)
-    final pixelsPerSec = widget.speed * 60.0;
-    if (pixelsPerSec <= 0) return const Duration(seconds: 4);
-    final seconds = (widget.itemWidth / pixelsPerSec).clamp(1.5, 8.0);
-    return Duration(milliseconds: (seconds * 1000).round());
-  }
-
-  void _pauseForInteraction() {
-    _userInteracting = true;
-    _autoTimer?.cancel();
-    _resumeTimer?.cancel();
-  }
-
-  void _scheduleResume() {
-    _resumeTimer?.cancel();
-    _resumeTimer = Timer(const Duration(seconds: 2), () {
-      if (!mounted) return;
-      _userInteracting = false;
-      _startAuto();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final maxW = constraints.maxWidth;
-        final fraction = (widget.itemWidth / maxW).clamp(0.5, 1.0);
-        // Recreate controller if fraction changed
-        if ((fraction - _viewportFraction).abs() > 0.001) {
-          final currentPage = _pageController.hasClients
-              ? _pageController.page?.round() ?? _pageController.initialPage
-              : _pageController.initialPage;
-          final old = _pageController;
-          _viewportFraction = fraction;
-          _pageController = PageController(
-            initialPage: currentPage,
-            viewportFraction: _viewportFraction,
-          );
-          // Restart auto timer to use the new controller
-          if (!_userInteracting) {
-            _startAuto();
-          }
-          // Dispose old after frame to avoid disrupting current build
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            old.dispose();
-          });
-        }
-        return Listener(
-          onPointerDown: (_) => _pauseForInteraction(),
-          onPointerUp: (_) => _scheduleResume(),
-          onPointerCancel: (_) => _scheduleResume(),
-          child: PageView.builder(
-            controller: _pageController,
-            onPageChanged: (_) {
-              // Keep primary controller in sync if needed
-              // (we use a separate instance with same initialPage to apply viewportFraction)
-            },
-            itemBuilder: (_, index) {
-              final it = widget.items[index % widget.items.length];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: it.onTap,
-                  child: Center(
-                    child: SizedBox(
-                      height: widget.height,
-                      width: widget.itemWidth,
-                      child: _Section3Card(asset: it.asset, height: it.height),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _CountdownBand extends StatefulWidget {
-  final DateTime target;
-  final bool darkOnLight;
-  const _CountdownBand({required this.target, this.darkOnLight = false});
-
-  @override
-  State<_CountdownBand> createState() => _CountdownBandState();
-}
-
-class _CountdownBandState extends State<_CountdownBand> {
-  late Duration remaining;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    remaining = widget.target.difference(DateTime.now());
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final diff = widget.target.difference(DateTime.now());
-      setState(() => remaining = diff.isNegative ? Duration.zero : diff);
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String two(int n) => n.toString().padLeft(2, '0');
-    final days = remaining.inDays;
-    final hours = remaining.inHours % 24;
-    final minutes = remaining.inMinutes % 60;
-    final seconds = remaining.inSeconds % 60;
-
-    final bool darkOnLight = widget.darkOnLight;
-    Widget box(String label, String value) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: darkOnLight
-              ? Colors.black.withValues(alpha: 0.08)
-              : Colors.white.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: darkOnLight ? Colors.black26 : Colors.white24,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              value,
-              style: GoogleFonts.orbitron(
-                color: darkOnLight ? Colors.black : AppColors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: GoogleFonts.montserrat(
-                color: darkOnLight ? Colors.black54 : Colors.white70,
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      alignment: WrapAlignment.center,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        box('DAYS', two(days)),
-        box('HRS', two(hours)),
-        box('MIN', two(minutes)),
-        box('SEC', two(seconds)),
-      ],
-    );
-  }
-}
-
-class _BrandItem {
-  final String label;
-  final IconData icon;
-  const _BrandItem(this.label, this.icon);
-}
-
-class _SponsorsStrip extends StatefulWidget {
-  final List<_BrandItem> items;
-  final double height;
-  final Color background;
-  final Color borderColor;
-  const _SponsorsStrip({
-    required this.items,
-    required this.height,
-    required this.background,
-    required this.borderColor,
-  });
-
-  @override
-  State<_SponsorsStrip> createState() => _SponsorsStripState();
-}
-
-class _SponsorsStripState extends State<_SponsorsStrip> {
-  final ScrollController _ctrl = ScrollController();
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 20), (_) {
-      if (!_ctrl.hasClients) return;
-      final max = _ctrl.position.maxScrollExtent;
-      final next = _ctrl.offset + 1.2;
-      if (next >= max) {
-        _ctrl.jumpTo(0);
-      } else {
-        _ctrl.jumpTo(next);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final repeated = List<_BrandItem>.generate(
-      10 * widget.items.length,
-      (i) => widget.items[i % widget.items.length],
-    );
-
-    return Container(
-      height: widget.height,
-      decoration: BoxDecoration(
-        color: widget.background,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: widget.borderColor),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: ListView.separated(
-        controller: _ctrl,
-        scrollDirection: Axis.horizontal,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (_, index) {
-          final it = repeated[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(it.icon, color: AppColors.accentCyan),
-                const SizedBox(width: 8),
-                Text(
-                  it.label,
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.8,
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemCount: repeated.length,
-      ),
-    );
-  }
-}
+// Extracted private widgets moved to lib/screens/home/widgets/*
