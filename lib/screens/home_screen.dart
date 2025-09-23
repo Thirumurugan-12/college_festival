@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: isShort ? 42 : 50,
               background: Colors.yellow,
               textStyle: bottomStyle,
-              text: 'LAST DATE TO REGISTER - OCTOBER 9TH, 2025',
+              text: 'LAST DATE TO REGISTER - OCTOBER 30TH, 2025',
               separator: ' ♦ ',
               reverse: true,
               speed: 1.0,
@@ -1168,7 +1168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     final h = constraints.maxHeight;
                     final isShort = h < 640;
                     final bottomPad = isWide
-                        ? (isShort ? 80.0 : 160.0)
+                        ? (isShort ? 80.0 : 80.0)
                         : (isShort ? 64.0 : 120.0);
 
                     // Assets from lib/assets/ctEvents
@@ -1237,11 +1237,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: row(reverse: true, speed: 1.1),
                             ),
                             const SizedBox(height: 10),
-                            // FadeInUp(
-                            //   duration: const Duration(milliseconds: 900),
-                            //   delay: const Duration(milliseconds: 180),
-                            //   child: row(reverse: false, speed: 1.0),
-                            // ),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 900),
+                              delay: const Duration(milliseconds: 180),
+                              child: row(reverse: false, speed: 1.0),
+                            ),
                             // const SizedBox(height: 20),
                             FadeInUp(
                               duration: const Duration(milliseconds: 700),
@@ -1360,6 +1360,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             const SizedBox(height: 20),
+                            // First carousel row - left to right
                             FadeInUp(
                               duration: const Duration(milliseconds: 700),
                               child: _AutoScrollCardStrip(
@@ -1373,6 +1374,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                   vertical: 6,
                                 ),
                                 speed: 0.8,
+                                reverse: false,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            // Second carousel row - right to left (opposite direction)
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 800),
+                              delay: const Duration(milliseconds: 100),
+                              child: _AutoScrollCardStrip(
+                                height: rowHeight,
+                                itemWidth: itemWidth,
+                                itemCount: sponsorAssets.length,
+                                assets: sponsorAssets,
+                                radius: 14,
+                                itemMargin: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 6,
+                                ),
+                                speed: 0.9,
+                                reverse: true,
                               ),
                             ),
                           ],
