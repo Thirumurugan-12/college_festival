@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../screens/login/login_screen.dart';
 import '../screens/voting/voting_screen.dart';
+import '../screens/college_dashboard.dart';
 
 class GlassHeader extends StatelessWidget implements PreferredSizeWidget {
   const GlassHeader({super.key});
@@ -52,6 +53,21 @@ class GlassHeader extends StatelessWidget implements PreferredSizeWidget {
                       Navigator.pop(context);
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const VotingScreen()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.dashboard, color: Colors.black),
+                    title: const Text(
+                      'College Dashboard',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const CollegeDashboard(),
+                        ),
                       );
                     },
                   ),
@@ -143,6 +159,22 @@ class GlassHeader extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 child: const Text('Vote'),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const CollegeDashboard()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text('Dashboard'),
               ),
               const SizedBox(width: 16),
             ],

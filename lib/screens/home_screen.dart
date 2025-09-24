@@ -265,55 +265,6 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    void openPhoto() {
-      final data = CategoryDetailData(
-        categoryName: 'Photography',
-        mode: '100% Online',
-        participants: 'College students across Tamil Nadu',
-        timeline: '30 Days',
-        entryFormat: const EntryFormat(
-          type: 'Photography',
-          duration: 'Single submission',
-          language: '-',
-          style: 'Theme-based',
-          submissionFormat: 'Image',
-        ),
-        rules: const [
-          'One Entry Per Participant',
-          'Original photos only',
-          'Basic color correction allowed; no heavy manipulation',
-        ],
-        judgingCriteria: const [
-          JudgingCriterion('Composition', 30),
-          JudgingCriterion('Creativity', 25),
-          JudgingCriterion('Lighting & Focus', 20),
-          JudgingCriterion('Theme Relevance', 15),
-          JudgingCriterion('Overall Impact', 10),
-        ],
-        awards: const Awards(
-          winner: 'TBA',
-          runnerUp: 'TBA',
-          audienceChoice: 'TBA',
-          topCollege: 'TBA',
-        ),
-        voting: Voting(
-          deadline: DateTime(2025, 11, 5, 23, 59, 59),
-          platform: 'College Thiruvizha Website',
-          notes: 'One vote per entry per user',
-        ),
-        juryPanel: const ['Professional Photographers', 'Artists'],
-        importantNotes: const ['Details to be announced.'],
-      );
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => CategoryDetailScreen(
-            data: data,
-            imageAsset: 'lib/assets/photography.png',
-          ),
-        ),
-      );
-    }
-
     void openDance() {
       final data = CategoryDetailData(
         categoryName: 'Dance',
@@ -368,38 +319,24 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    // 2x2 Grid layout with controlled card widths
+    // 3 cards layout: Singing on top, Acting and Dance below
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // First row: Singing and Photography
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SizedBox(
-              width: cardWidth,
-              child: GestureDetector(
-                onTap: openSinging,
-                child: _Section3Card(
-                  asset: 'lib/assets/singing.png',
-                  height: cardHeight,
-                ),
+        // First row: Singing (centered)
+        Center(
+          child: SizedBox(
+            width: cardWidth,
+            child: GestureDetector(
+              onTap: openSinging,
+              child: _Section3Card(
+                asset: 'lib/assets/singing.png',
+                height: cardHeight,
               ),
             ),
-            SizedBox(width: gap),
-            SizedBox(
-              width: cardWidth,
-              child: GestureDetector(
-                onTap: openPhoto,
-                child: _Section3Card(
-                  asset: 'lib/assets/photography.png',
-                  height: cardHeight,
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-        SizedBox(height: gap),
+        SizedBox(height: gap + 10),
         // Second row: Acting and Dance
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -595,6 +532,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   darkOnLight: false,
                                 ),
                               ),
+                              const SizedBox(height: 40),
+                              // Add scroll down animation
+                              const _ScrollDownIndicator(),
                             ],
                           ),
                         ),
@@ -891,61 +831,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               }
 
-                              void openPhoto() {
-                                final data = CategoryDetailData(
-                                  categoryName: 'Photography',
-                                  mode: '100% Online',
-                                  participants:
-                                      'College students across Tamil Nadu',
-                                  timeline: '30 Days',
-                                  entryFormat: const EntryFormat(
-                                    type: 'Photography',
-                                    duration: 'Single submission',
-                                    language: '-',
-                                    style: 'Theme-based',
-                                    submissionFormat: 'Image',
-                                  ),
-                                  rules: const [
-                                    'One Entry Per Participant',
-                                    'Original photos only',
-                                    'Basic color correction allowed; no heavy manipulation',
-                                  ],
-                                  judgingCriteria: const [
-                                    JudgingCriterion('Composition', 30),
-                                    JudgingCriterion('Creativity', 25),
-                                    JudgingCriterion('Lighting & Focus', 20),
-                                    JudgingCriterion('Theme Relevance', 15),
-                                    JudgingCriterion('Overall Impact', 10),
-                                  ],
-                                  awards: const Awards(
-                                    winner: 'TBA',
-                                    runnerUp: 'TBA',
-                                    audienceChoice: 'TBA',
-                                    topCollege: 'TBA',
-                                  ),
-                                  voting: Voting(
-                                    deadline: DateTime(2025, 11, 5, 23, 59, 59),
-                                    platform: 'College Thiruvizha Website',
-                                    notes: 'One vote per entry per user',
-                                  ),
-                                  juryPanel: const [
-                                    'Professional Photographers',
-                                    'Artists',
-                                  ],
-                                  importantNotes: const [
-                                    'Details to be announced.',
-                                  ],
-                                );
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => CategoryDetailScreen(
-                                      data: data,
-                                      imageAsset: 'lib/assets/photography.png',
-                                    ),
-                                  ),
-                                );
-                              }
-
                               void openActing() {
                                 final data = CategoryDetailData(
                                   categoryName: 'Acting',
@@ -1081,11 +966,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   'lib/assets/singing.png',
                                   cardH,
                                   openSinging,
-                                ),
-                                _CategoryCardSpec(
-                                  'lib/assets/photography.png',
-                                  cardH,
-                                  openPhoto,
                                 ),
                                 _CategoryCardSpec(
                                   'lib/assets/acting.png',
@@ -1470,7 +1350,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(height: 10),
                           // link('Filmmaking'),
                           link('Music'),
-                          link('Photography'),
                           link('Dance'),
                           link('Acting'),
                           // link('Performing Arts'),
@@ -2912,6 +2791,104 @@ class _SponsorsStripState extends State<_SponsorsStrip> {
         },
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemCount: repeated.length,
+      ),
+    );
+  }
+}
+
+// Animated scroll down indicator
+class _ScrollDownIndicator extends StatefulWidget {
+  const _ScrollDownIndicator();
+
+  @override
+  State<_ScrollDownIndicator> createState() => _ScrollDownIndicatorState();
+}
+
+class _ScrollDownIndicatorState extends State<_ScrollDownIndicator>
+    with TickerProviderStateMixin {
+  late AnimationController _bounceController;
+  late AnimationController _fadeController;
+  late Animation<double> _bounceAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Bounce animation for the arrow
+    _bounceController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    _bounceAnimation = Tween<double>(begin: 0.0, end: 10.0).animate(
+      CurvedAnimation(parent: _bounceController, curve: Curves.easeInOut),
+    );
+
+    // Fade animation for the text
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
+
+    // Start animations with delay
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      if (mounted) {
+        _bounceController.repeat(reverse: true);
+        _fadeController.repeat(reverse: true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _bounceController.dispose();
+    _fadeController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeInUp(
+      duration: const Duration(milliseconds: 1000),
+      delay: const Duration(milliseconds: 2000),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedBuilder(
+            animation: _fadeAnimation,
+            builder: (context, child) {
+              return Opacity(
+                opacity: _fadeAnimation.value,
+                child: Text(
+                  'SCROLL DOWN TO EXPLORE',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 2.0,
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+          AnimatedBuilder(
+            animation: _bounceAnimation,
+            builder: (context, child) {
+              return Transform.translate(
+                offset: Offset(0, _bounceAnimation.value),
+                child: Icon(
+                  Icons.keyboard_arrow_down,
+                  color: Colors.white,
+                  size: 32,
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }

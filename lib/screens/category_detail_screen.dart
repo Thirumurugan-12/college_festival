@@ -403,9 +403,14 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
                 // Animated Text Banner
                 SliverToBoxAdapter(child: _AnimatedTextBanner()),
 
-                // Entry Format Section (IFP Style Timeline)
+                // Prizes Section - Now FIRST and GRAND!
                 SliverToBoxAdapter(
-                  child: _IFPStyleTimeline(format: widget.data.entryFormat),
+                  child: _GrandPrizesSection(data: widget.data),
+                ),
+
+                // Action Buttons Section (Entry Format, Rules, Judging Criteria)
+                SliverToBoxAdapter(
+                  child: _ActionButtonsSection(data: widget.data),
                 ),
 
                 // Category Information Cards
@@ -413,24 +418,15 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
                   child: _CategoryInfoSection(data: widget.data),
                 ),
 
-                // Rules Section
-                SliverToBoxAdapter(child: _RulesSection(data: widget.data)),
-
-                // Judging Criteria Section
-                SliverToBoxAdapter(
-                  child: _JudgingCriteriaSection(data: widget.data),
-                ),
-
-                // Awards Section
-                SliverToBoxAdapter(child: _AwardsSection(data: widget.data)),
-
                 // Spotify Section (only for singing category)
                 if (widget.data.categoryName.toLowerCase().contains('singing'))
                   SliverToBoxAdapter(child: _SpotifySection()),
 
-                // Registration Section
+                // Extra spacing for bottom fixed button
                 SliverToBoxAdapter(
-                  child: _RegistrationSection(data: widget.data),
+                  child: SizedBox(
+                    height: 100,
+                  ), // Space for fixed register button
                 ),
               ],
             ),
@@ -462,7 +458,130 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
               ),
             ),
           ),
+
+          // Fixed Register Now Button - Always Visible at Bottom
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                ),
+              ),
+              child: SafeArea(child: _buildFixedRegisterButton(context)),
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFixedRegisterButton(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+
+    return FadeInUp(
+      duration: const Duration(milliseconds: 600),
+      child: AnimatedBuilder(
+        animation: _bounceController,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: 1.0 + (_bounceController.value * 0.05),
+            child: Center(
+              child: Container(
+                width: isMobile ? double.infinity : 390,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PhoneScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 24 : 24,
+                      vertical: isMobile ? 20 : 24,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      side: const BorderSide(color: Colors.black, width: 4),
+                    ),
+                    elevation: 12,
+                    shadowColor: Colors.black.withOpacity(0.8),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.red,
+                          offset: const Offset(4, 4),
+                          blurRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Animated flash icon
+                        AnimatedBuilder(
+                          animation: _bounceController,
+                          builder: (context, child) {
+                            return Transform.rotate(
+                              angle:
+                                  math.sin(
+                                    _bounceController.value * 2 * math.pi,
+                                  ) *
+                                  0.1,
+                              child: Icon(
+                                Icons.flash_on,
+                                color: Colors.yellow,
+                                size: isMobile ? 28 : 32,
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'REGISTER NOW!',
+                          style: GoogleFonts.fredoka(
+                            fontSize: isMobile ? 22 : 26,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Animated explosion emoji
+                        AnimatedBuilder(
+                          animation: _bounceController,
+                          builder: (context, child) {
+                            return Transform.scale(
+                              scale: 1.0 + (_bounceController.value * 0.3),
+                              child: Text(
+                                '💥',
+                                style: TextStyle(fontSize: isMobile ? 24 : 28),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -481,7 +600,7 @@ class _HeroSection extends StatelessWidget {
     final isMobile = screenWidth < 768;
 
     return Container(
-      height: MediaQuery.of(context).size.height * (isMobile ? 0.7 : 0.6),
+      height: MediaQuery.of(context).size.height * (isMobile ? 0.5 : 0.6),
       width: double.infinity,
       child: Stack(
         children: [
@@ -714,18 +833,18 @@ class _AnimatedTextBannerState extends State<_AnimatedTextBanner>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     for (int i = 0; i < 8; i++) ...[
-                      _bannerItem('REGISTER NOW', 10),
-                      const SizedBox(width: 15),
-                      _bannerItem('✦', 10),
-                      const SizedBox(width: 15),
-                      _bannerItem('LIMITED SEATS', 9),
-                      const SizedBox(width: 15),
-                      _bannerItem('✦', 10),
-                      const SizedBox(width: 15),
-                      _bannerItem('EXCITING PRIZES', 9),
-                      const SizedBox(width: 15),
-                      _bannerItem('✦', 10),
-                      const SizedBox(width: 15),
+                      _bannerItem('SUBMIT FROM 1 OCT TO 30 OCT 2025', 16),
+                      const SizedBox(width: 30),
+                      _bannerItem('✦', 16),
+                      const SizedBox(width: 30),
+                      _bannerItem('VOTING ENDS ON NOV 5 2025', 16),
+                      const SizedBox(width: 30),
+                      _bannerItem('✦', 16),
+                      const SizedBox(width: 30),
+                      _bannerItem('RESULTS ON DEC 5 2025', 16),
+                      const SizedBox(width: 30),
+                      _bannerItem('✦', 16),
+                      const SizedBox(width: 30),
                     ],
                   ],
                 ),
@@ -1236,7 +1355,7 @@ class _CategoryInfoSection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: Colors.orange,
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(color: Colors.black, width: 4),
                 boxShadow: [
@@ -1253,7 +1372,7 @@ class _CategoryInfoSection extends StatelessWidget {
                   Text('🏆', style: TextStyle(fontSize: isMobile ? 24 : 30)),
                   SizedBox(width: isMobile ? 8 : 12),
                   Text(
-                    'COMPETITION DETAILS',
+                    'WHEN WHO WHERE',
                     style: GoogleFonts.fredoka(
                       fontSize: isMobile ? 20 : 28,
                       fontWeight: FontWeight.w900,
@@ -2368,11 +2487,41 @@ class _JudgingCriteriaSection extends StatelessWidget {
   }
 }
 
-// Awards Section
-class _AwardsSection extends StatelessWidget {
+// Grand Prizes Section - First and Most Attractive!
+class _GrandPrizesSection extends StatefulWidget {
   final CategoryDetailData data;
 
-  const _AwardsSection({required this.data});
+  const _GrandPrizesSection({required this.data});
+
+  @override
+  State<_GrandPrizesSection> createState() => _GrandPrizesSectionState();
+}
+
+class _GrandPrizesSectionState extends State<_GrandPrizesSection>
+    with TickerProviderStateMixin {
+  late AnimationController _cashAnimationController;
+  late AnimationController _sparkleController;
+
+  @override
+  void initState() {
+    super.initState();
+    _cashAnimationController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _sparkleController = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _cashAnimationController.dispose();
+    _sparkleController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -2387,184 +2536,523 @@ class _AwardsSection extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.yellow.withOpacity(0.3),
+            Colors.amber.withOpacity(0.3),
+            Colors.yellow.withOpacity(0.5),
             Colors.orange.withOpacity(0.4),
-            Colors.red.withOpacity(0.3),
           ],
         ),
-        border: Border.all(color: Colors.black, width: 4),
+        border: Border.all(color: Colors.black, width: 6),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            offset: const Offset(8, 8),
+            blurRadius: 0,
+          ),
+        ],
       ),
       child: Column(
         children: [
+          // Grand Header with Animation
           FadeInDown(
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
+            child: AnimatedBuilder(
+              animation: _sparkleController,
+              builder: (context, child) {
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 20 : 30,
+                    vertical: isMobile ? 20 : 25,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.yellow,
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(color: Colors.black, width: 4),
+                    gradient: LinearGradient(
+                      colors: [Colors.amber, Colors.yellow, Colors.orange],
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.black, width: 5),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black,
-                        offset: const Offset(6, 6),
+                        offset: const Offset(8, 8),
                         blurRadius: 0,
                       ),
                     ],
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  child: Column(
                     children: [
-                      Text(
-                        '🏆',
-                        style: TextStyle(fontSize: isMobile ? 24 : 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Transform.rotate(
+                            angle:
+                                math.sin(
+                                  _sparkleController.value * 2 * math.pi,
+                                ) *
+                                0.1,
+                            child: Text(
+                              '💰',
+                              style: TextStyle(fontSize: isMobile ? 32 : 40),
+                            ),
+                          ),
+                          SizedBox(width: isMobile ? 12 : 16),
+                          Text(
+                            'CASH PRIZES',
+                            style: GoogleFonts.fredoka(
+                              fontSize: isMobile ? 28 : 40,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                          SizedBox(width: isMobile ? 12 : 16),
+                          Transform.rotate(
+                            angle:
+                                -math.sin(
+                                  _sparkleController.value * 2 * math.pi,
+                                ) *
+                                0.1,
+                            child: Text(
+                              '💰',
+                              style: TextStyle(fontSize: isMobile ? 32 : 40),
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: isMobile ? 8 : 12),
-                      Text(
-                        'PRIZES & AWARDS',
-                        style: GoogleFonts.fredoka(
-                          fontSize: isMobile ? 20 : 28,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.black,
-                          letterSpacing: 1,
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.black, width: 3),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black,
+                              offset: const Offset(4, 4),
+                              blurRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'WIN BIG & GET FAMOUS! 🎉',
+                          style: GoogleFonts.fredoka(
+                            fontSize: isMobile ? 16 : 20,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      SizedBox(width: isMobile ? 8 : 12),
-                      Text(
-                        '🏆',
-                        style: TextStyle(fontSize: isMobile ? 24 : 30),
-                      ),
                     ],
                   ),
-                ),
-                SizedBox(height: isMobile ? 12 : 16),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.black, width: 3),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black,
-                        offset: const Offset(3, 3),
-                        blurRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    'Exciting rewards for outstanding performances! 🎉',
-                    style: GoogleFonts.fredoka(
-                      fontSize: isMobile ? 14 : 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
+                );
+              },
             ),
           ),
+
           SizedBox(height: isMobile ? 30 : 40),
 
-          isMobile
-              ? Column(
-                  children: [
-                    _buildAwardCard(
-                      '1ST PLACE',
-                      data.awards.winner,
-                      Colors.amber,
-                      Icons.military_tech,
-                      isMobile,
-                    ),
-                    const SizedBox(height: 20),
-                    _buildAwardCard(
-                      'RUNNER UP',
-                      data.awards.runnerUp,
-                      Colors.grey,
-                      Icons.workspace_premium,
-                      isMobile,
-                    ),
-                    const SizedBox(height: 20),
-                    _buildAwardCard(
-                      'AUDIENCE CHOICE',
-                      data.awards.audienceChoice,
-                      Colors.purple,
-                      Icons.favorite,
-                      isMobile,
-                    ),
-                    const SizedBox(height: 20),
-                    _buildAwardCard(
-                      'TOP COLLEGE',
-                      data.awards.topCollege,
-                      Colors.green,
-                      Icons.school,
-                      isMobile,
-                    ),
-                  ],
-                )
-              : Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 20,
-                  runSpacing: 20,
-                  children: [
-                    _buildAwardCard(
-                      '1ST PLACE',
-                      data.awards.winner,
-                      Colors.amber,
-                      Icons.military_tech,
-                      isMobile,
-                    ),
-                    _buildAwardCard(
-                      'RUNNER UP',
-                      data.awards.runnerUp,
-                      Colors.grey,
-                      Icons.workspace_premium,
-                      isMobile,
-                    ),
-                    _buildAwardCard(
-                      'AUDIENCE CHOICE',
-                      data.awards.audienceChoice,
-                      Colors.purple,
-                      Icons.favorite,
-                      isMobile,
-                    ),
-                    _buildAwardCard(
-                      'TOP COLLEGE',
-                      data.awards.topCollege,
-                      Colors.green,
-                      Icons.school,
-                      isMobile,
-                    ),
-                  ],
-                ),
+          // Cash Prize Cards with Animation
+          _buildGrandPrizeCards(isMobile),
         ],
       ),
     );
   }
 
-  Widget _buildAwardCard(
+  Widget _buildGrandPrizeCards(bool isMobile) {
+    return Column(
+      children: [
+        // Winner - Biggest and Most Prominent
+        FadeInUp(
+          child: AnimatedBuilder(
+            animation: _cashAnimationController,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: 1.0 + (_cashAnimationController.value * 0.05),
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(isMobile ? 24 : 32),
+                  margin: const EdgeInsets.only(bottom: 20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.amber, Colors.yellow],
+                    ),
+                    borderRadius: BorderRadius.circular(25),
+                    border: Border.all(color: Colors.black, width: 5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black,
+                        offset: const Offset(8, 8),
+                        blurRadius: 0,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.emoji_events,
+                            size: isMobile ? 35 : 50,
+                            color: Colors.black,
+                          ),
+                          const SizedBox(width: 16),
+                          Text(
+                            '1ST PLACE WINNER',
+                            style: GoogleFonts.fredoka(
+                              fontSize: isMobile ? 24 : 32,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Extract cash amount from winner description
+                      Text(
+                        _extractCashAmount(widget.data.awards.winner),
+                        style: GoogleFonts.fredoka(
+                          fontSize: isMobile ? 36 : 48,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.red,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: Colors.yellow, width: 2),
+                        ),
+                        child: Text(
+                          'Plus Trophy + Certificate + Digital Badge + Fame!',
+                          style: GoogleFonts.fredoka(
+                            fontSize: isMobile ? 12 : 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.yellow,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+
+        // Other prizes in a row
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Runner Up
+            Expanded(
+              child: _buildSmallPrizeCard(
+                'RUNNER UP',
+                widget.data.awards.runnerUp,
+                Colors.grey.shade300,
+                Icons.workspace_premium,
+                isMobile,
+              ),
+            ),
+            const SizedBox(width: 16),
+            // Audience Choice
+            Expanded(
+              child: _buildSmallPrizeCard(
+                'AUDIENCE CHOICE',
+                widget.data.awards.audienceChoice,
+                Colors.blue.shade300,
+                Icons.favorite,
+                isMobile,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 16),
+
+        // Top College (full width)
+        _buildSmallPrizeCard(
+          'TOP COLLEGE AWARD',
+          widget.data.awards.topCollege,
+          Colors.green.shade300,
+          Icons.school,
+          isMobile,
+          fullWidth: true,
+        ),
+      ],
+    );
+  }
+
+  String _extractCashAmount(String description) {
+    // Extract cash amount from description
+    final regex = RegExp(r'(\d{1,3}(?:,\d{3})*)\s*INR');
+    final match = regex.firstMatch(description);
+    if (match != null) {
+      return '₹${match.group(1)} CASH!';
+    }
+    return '₹20,000 CASH!'; // fallback
+  }
+
+  Widget _buildSmallPrizeCard(
     String title,
     String description,
     Color color,
     IconData icon,
-    bool isMobile,
-  ) {
+    bool isMobile, {
+    bool fullWidth = false,
+  }) {
     return FadeInUp(
       duration: const Duration(milliseconds: 600),
       child: Container(
-        width: isMobile ? double.infinity : 300,
-        padding: EdgeInsets.all(isMobile ? 20 : 24),
+        width: fullWidth ? double.infinity : null,
+        padding: EdgeInsets.all(isMobile ? 16 : 20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: color,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.black, width: 4),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              offset: const Offset(4, 4),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: Colors.black, size: isMobile ? 32 : 40),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: GoogleFonts.fredoka(
+                fontSize: isMobile ? 14 : 16,
+                fontWeight: FontWeight.w900,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _extractCashAmount(description),
+              style: GoogleFonts.fredoka(
+                fontSize: isMobile ? 16 : 20,
+                fontWeight: FontWeight.w700,
+                color: Colors.red,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Action Buttons Section - For Entry Format, Rules, and Judging Criteria
+class _ActionButtonsSection extends StatelessWidget {
+  final CategoryDetailData data;
+
+  const _ActionButtonsSection({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(isMobile ? 20 : 40),
+      child: Column(
+        children: [
+          FadeInDown(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: Colors.black, width: 4),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    offset: const Offset(6, 6),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('🏆', style: TextStyle(fontSize: isMobile ? 20 : 30)),
+                  SizedBox(width: isMobile ? 8 : 12),
+                  Text(
+                    'COMPETITION DETAILS',
+                    style: GoogleFonts.fredoka(
+                      fontSize: isMobile ? 20 : 28,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  SizedBox(width: isMobile ? 8 : 12),
+                  Text('🏆', style: TextStyle(fontSize: isMobile ? 20 : 30)),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Action Buttons
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              _buildActionButton(
+                context,
+                'ENTRY FORMAT',
+                Icons.format_list_bulleted,
+                Colors.cyan,
+                () => _showEntryFormatDialog(context),
+                isMobile,
+              ),
+              _buildActionButton(
+                context,
+                'RULES & REGULATIONS',
+                Icons.rule,
+                Colors.orange,
+                () => _showRulesDialog(context),
+                isMobile,
+              ),
+              _buildActionButton(
+                context,
+                'JUDGING CRITERIA',
+                Icons.gavel,
+                Colors.purple,
+                () => _showJudgingDialog(context),
+                isMobile,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+    bool isMobile,
+  ) {
+    return FadeInUp(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: isMobile ? double.infinity : 200,
+          padding: EdgeInsets.all(isMobile ? 16 : 20),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.black, width: 4),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black,
+                offset: const Offset(6, 6),
+                blurRadius: 0,
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Icon(icon, size: isMobile ? 32 : 40, color: Colors.black),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                style: GoogleFonts.fredoka(
+                  fontSize: isMobile ? 14 : 16,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'TAP TO VIEW',
+                  style: GoogleFonts.fredoka(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showEntryFormatDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => _EntryFormatDialog(format: data.entryFormat),
+    );
+  }
+
+  void _showRulesDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => _RulesDialog(rules: data.rules),
+    );
+  }
+
+  void _showJudgingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => _JudgingDialog(criteria: data.judgingCriteria),
+    );
+  }
+}
+
+// Dialog widgets
+class _EntryFormatDialog extends StatelessWidget {
+  final EntryFormat format;
+  const _EntryFormatDialog({required this.format});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.cyan.shade100, Colors.blue.shade100],
+          ),
+          borderRadius: BorderRadius.circular(25),
           border: Border.all(color: Colors.black, width: 4),
           boxShadow: [
             BoxShadow(
@@ -2574,43 +3062,286 @@ class _AwardsSection extends StatelessWidget {
             ),
           ],
         ),
-        child: isMobile
-            ? Row(
-                children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.black, width: 3),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: const Offset(3, 3),
-                          blurRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 30),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.cyan,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.black, width: 3),
+              ),
+              child: Text(
+                'ENTRY FORMAT',
+                style: GoogleFonts.fredoka(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Content
+            _buildFormatItem('Type', format.type),
+            _buildFormatItem('Duration', format.duration),
+            _buildFormatItem('Language', format.language),
+            _buildFormatItem('Style', format.style),
+            _buildFormatItem('Submission', format.submissionFormat),
+
+            const SizedBox(height: 20),
+
+            // Close button
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  side: const BorderSide(color: Colors.black, width: 2),
+                ),
+              ),
+              child: Text(
+                'CLOSE',
+                style: GoogleFonts.fredoka(fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFormatItem(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              label,
+              style: GoogleFonts.fredoka(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              value,
+              style: GoogleFonts.fredoka(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RulesDialog extends StatelessWidget {
+  final List<String> rules;
+  const _RulesDialog({required this.rules});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500, maxHeight: 600),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.orange.shade100, Colors.red.shade100],
+          ),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: Colors.black, width: 4),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              offset: const Offset(6, 6),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.orange,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.black, width: 3),
+              ),
+              child: Text(
+                'RULES & REGULATIONS',
+                style: GoogleFonts.fredoka(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Content
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: rules.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
+                          width: 24,
+                          height: 24,
                           decoration: BoxDecoration(
-                            color: color,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.black, width: 2),
+                            color: Colors.black,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${index + 1}',
+                              style: GoogleFonts.fredoka(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            rules[index],
+                            style: GoogleFonts.fredoka(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Close button
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  side: const BorderSide(color: Colors.black, width: 2),
+                ),
+              ),
+              child: Text(
+                'CLOSE',
+                style: GoogleFonts.fredoka(fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _JudgingDialog extends StatelessWidget {
+  final List<JudgingCriterion> criteria;
+  const _JudgingDialog({required this.criteria});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.purple.shade100, Colors.pink.shade100],
+          ),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: Colors.black, width: 4),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              offset: const Offset(6, 6),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.purple,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.black, width: 3),
+              ),
+              child: Text(
+                'JUDGING CRITERIA',
+                style: GoogleFonts.fredoka(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Content
+            ...criteria
+                .map(
+                  (criterion) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            shape: BoxShape.circle,
                           ),
                           child: Text(
-                            title,
+                            '${criterion.weightage}%',
                             style: GoogleFonts.fredoka(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
@@ -2618,82 +3349,47 @@ class _AwardsSection extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          description,
-                          style: GoogleFonts.fredoka(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            criterion.parameter,
+                            style: GoogleFonts.fredoka(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
                           ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
-                ],
-              )
-            : Column(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.black, width: 4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: const Offset(4, 4),
-                          blurRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 40),
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: Colors.black, width: 3),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: const Offset(2, 2),
-                          blurRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      title,
-                      style: GoogleFonts.fredoka(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    description,
-                    style: GoogleFonts.fredoka(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                )
+                .toList(),
+
+            const SizedBox(height: 20),
+
+            // Close button
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  side: const BorderSide(color: Colors.black, width: 2),
+                ),
               ),
+              child: Text(
+                'CLOSE',
+                style: GoogleFonts.fredoka(fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
