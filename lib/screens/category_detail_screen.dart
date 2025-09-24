@@ -422,6 +422,15 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
                 if (widget.data.categoryName.toLowerCase().contains('singing'))
                   SliverToBoxAdapter(child: _SpotifySection()),
 
+                // Participant Benefits Section - WIN OR LOSE style
+                SliverToBoxAdapter(child: _ParticipantBenefitsSection()),
+
+                // Testimonials Section
+                SliverToBoxAdapter(child: _TestimonialsSection()),
+
+                // Footer Section with policies
+                SliverToBoxAdapter(child: _FooterSection()),
+
                 // Extra spacing for bottom fixed button
                 SliverToBoxAdapter(
                   child: SizedBox(
@@ -707,6 +716,16 @@ class _HeroSection extends StatelessWidget {
               child: Column(
                 children: [
                   // Display image directly without container
+                  // Remove the Positioned widget and just use the SizedBox for the logo above the main image.
+                  // Place the logo as a child in the Column, before the main image.
+                  SizedBox(
+                    height: isMobile ? 170 : 0,
+                    child: Image.asset(
+                      'lib/assets/logo.png',
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
+                    ),
+                  ),
                   SizedBox(
                     height: isMobile ? 170 : 260,
                     child: Image.asset(
@@ -715,35 +734,35 @@ class _HeroSection extends StatelessWidget {
                       filterQuality: FilterQuality.high,
                     ),
                   ),
-                  SizedBox(height: isMobile ? 20 : 30),
+                  // SizedBox(height: isMobile ? 20 : 30),
                   // Comic speech bubble
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
-                      border: Border.all(color: Colors.black, width: 3),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: const Offset(4, 4),
-                          blurRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      'Competition Challenge!',
-                      style: GoogleFonts.fredoka(
-                        fontSize: isMobile ? 16 : 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ),
+                  //   Container(
+                  //     padding: const EdgeInsets.symmetric(
+                  //       horizontal: 20,
+                  //       vertical: 12,
+                  //     ),
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       borderRadius: BorderRadius.circular(25),
+                  //       border: Border.all(color: Colors.black, width: 3),
+                  //       boxShadow: [
+                  //         BoxShadow(
+                  //           color: Colors.black,
+                  //           offset: const Offset(4, 4),
+                  //           blurRadius: 0,
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     child: Text(
+                  //       'Competition Challenge!',
+                  //       style: GoogleFonts.fredoka(
+                  //         fontSize: isMobile ? 16 : 20,
+                  //         fontWeight: FontWeight.w700,
+                  //         color: Colors.black,
+                  //         letterSpacing: 1,
+                  //       ),
+                  //     ),
+                  //   ),
                 ],
               ),
             ),
@@ -922,402 +941,6 @@ class _AnimatedTextBannerState extends State<_AnimatedTextBanner>
         ),
         overflow: TextOverflow.ellipsis,
         maxLines: 1,
-      ),
-    );
-  }
-}
-
-// Comic Style Timeline for Entry Format
-class _IFPStyleTimeline extends StatelessWidget {
-  final EntryFormat format;
-
-  const _IFPStyleTimeline({required this.format});
-
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
-
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        vertical: isMobile ? 40 : 80,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.pink.withOpacity(0.3),
-            Colors.purple.withOpacity(0.4),
-            Colors.blue.withOpacity(0.3),
-          ],
-        ),
-        border: Border.all(color: Colors.black, width: 4),
-      ),
-      child: Column(
-        children: [
-          // Comic Header
-          FadeInDown(
-            duration: const Duration(milliseconds: 800),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.yellow,
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(color: Colors.black, width: 4),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black,
-                        offset: const Offset(6, 6),
-                        blurRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('⚡', style: TextStyle(fontSize: isMobile ? 24 : 30)),
-                      SizedBox(width: isMobile ? 8 : 12),
-                      Text(
-                        'ENTRY FORMAT',
-                        style: GoogleFonts.fredoka(
-                          fontSize: isMobile ? 20 : 28,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.black,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      SizedBox(width: isMobile ? 8 : 12),
-                      Text('⚡', style: TextStyle(fontSize: isMobile ? 24 : 30)),
-                    ],
-                  ),
-                ),
-                SizedBox(height: isMobile ? 6 : 8),
-                Text(
-                  'Choose the format that suits your vision',
-                  style: GoogleFonts.montserrat(
-                    fontSize: isMobile ? 14 : 16,
-                    color: Colors.white60,
-                    letterSpacing: 1,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: isMobile ? 30 : 60),
-
-          // Timeline Cards Grid
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return Container(
-                constraints: BoxConstraints(
-                  maxWidth: isMobile ? double.infinity : 1200,
-                ),
-                child: isMobile
-                    ? Column(
-                        children: [
-                          _buildTimelineCard(
-                            icon: Icons.category,
-                            title: 'TYPE',
-                            value: format.type,
-                            color: Colors.cyan,
-                            delay: 300,
-                            isMobile: true,
-                          ),
-                          const SizedBox(height: 20),
-                          _buildTimelineCard(
-                            icon: Icons.schedule,
-                            title: 'DURATION',
-                            value: format.duration,
-                            color: Colors.orange,
-                            delay: 500,
-                            isMobile: true,
-                          ),
-                          const SizedBox(height: 20),
-                          _buildTimelineCard(
-                            icon: Icons.language,
-                            title: 'LANGUAGE',
-                            value: format.language,
-                            color: Colors.purple,
-                            delay: 700,
-                            isMobile: true,
-                          ),
-                          const SizedBox(height: 20),
-                          _buildTimelineCard(
-                            icon: Icons.palette,
-                            title: 'STYLE',
-                            value: format.style,
-                            color: Colors.green,
-                            delay: 900,
-                            isMobile: true,
-                          ),
-                          const SizedBox(height: 20),
-                          _buildTimelineCard(
-                            icon: Icons.upload,
-                            title: 'SUBMISSION',
-                            value: format.submissionFormat,
-                            color: Colors.red,
-                            delay: 1100,
-                            isMobile: true,
-                          ),
-                        ],
-                      )
-                    : constraints.maxWidth > 800
-                    ? Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 20,
-                        runSpacing: 20,
-                        children: [
-                          _buildTimelineCard(
-                            icon: Icons.category,
-                            title: 'TYPE',
-                            value: format.type,
-                            color: Colors.cyan,
-                            delay: 300,
-                            isMobile: false,
-                          ),
-                          _buildTimelineCard(
-                            icon: Icons.schedule,
-                            title: 'DURATION',
-                            value: format.duration,
-                            color: Colors.orange,
-                            delay: 500,
-                            isMobile: false,
-                          ),
-                          _buildTimelineCard(
-                            icon: Icons.language,
-                            title: 'LANGUAGE',
-                            value: format.language,
-                            color: Colors.purple,
-                            delay: 700,
-                            isMobile: false,
-                          ),
-                          _buildTimelineCard(
-                            icon: Icons.palette,
-                            title: 'STYLE',
-                            value: format.style,
-                            color: Colors.green,
-                            delay: 900,
-                            isMobile: false,
-                          ),
-                          _buildTimelineCard(
-                            icon: Icons.upload,
-                            title: 'SUBMISSION',
-                            value: format.submissionFormat,
-                            color: Colors.red,
-                            delay: 1100,
-                            isMobile: false,
-                          ),
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTimelineCard(
-                                  icon: Icons.category,
-                                  title: 'TYPE',
-                                  value: format.type,
-                                  color: Colors.cyan,
-                                  delay: 300,
-                                  isMobile: true,
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              Expanded(
-                                child: _buildTimelineCard(
-                                  icon: Icons.schedule,
-                                  title: 'DURATION',
-                                  value: format.duration,
-                                  color: Colors.orange,
-                                  delay: 500,
-                                  isMobile: true,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTimelineCard(
-                                  icon: Icons.language,
-                                  title: 'LANGUAGE',
-                                  value: format.language,
-                                  color: Colors.purple,
-                                  delay: 700,
-                                  isMobile: true,
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              Expanded(
-                                child: _buildTimelineCard(
-                                  icon: Icons.palette,
-                                  title: 'STYLE',
-                                  value: format.style,
-                                  color: Colors.green,
-                                  delay: 900,
-                                  isMobile: true,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          Container(
-                            width: constraints.maxWidth * 0.6,
-                            child: _buildTimelineCard(
-                              icon: Icons.upload,
-                              title: 'SUBMISSION',
-                              value: format.submissionFormat,
-                              color: Colors.red,
-                              delay: 1100,
-                              isMobile: true,
-                            ),
-                          ),
-                        ],
-                      ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTimelineCard({
-    required IconData icon,
-    required String title,
-    required String value,
-    required Color color,
-    required int delay,
-    required bool isMobile,
-  }) {
-    return FadeInUp(
-      duration: const Duration(milliseconds: 800),
-      delay: Duration(milliseconds: delay),
-      child: Container(
-        width: isMobile ? null : 280, // Allow flexible width for mobile
-        height: isMobile ? null : 180, // Allow flexible height for mobile
-        constraints: isMobile
-            ? const BoxConstraints(minHeight: 120, maxHeight: 160)
-            : BoxConstraints(minHeight: 120, maxHeight: 280),
-        padding: EdgeInsets.all(isMobile ? 16 : 10),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.black, width: 4),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black,
-              offset: const Offset(6, 6),
-              blurRadius: 0,
-            ),
-          ],
-        ),
-        child: isMobile
-            ? Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: color.withOpacity(0.5),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 20),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          title,
-                          style: GoogleFonts.orbitron(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: color,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          value,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: color.withOpacity(0.5),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 30),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    title,
-                    style: GoogleFonts.orbitron(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: color,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    value,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
       ),
     );
   }
@@ -1984,503 +1607,6 @@ class _AutoScrollCarouselState extends State<_AutoScrollCarousel>
               ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// Registration Section
-class _RegistrationSection extends StatelessWidget {
-  final CategoryDetailData data;
-
-  const _RegistrationSection({required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
-
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(isMobile ? 20 : 40),
-      child: FadeInUp(
-        duration: const Duration(milliseconds: 800),
-        child: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const PhoneScreen()),
-              );
-            },
-            style:
-                ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isMobile ? 40 : 60,
-                    vertical: isMobile ? 16 : 20,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: const BorderSide(color: Colors.black, width: 4),
-                  ),
-                  elevation: 0,
-                  shadowColor: Colors.transparent,
-                ).copyWith(
-                  overlayColor: MaterialStateProperty.all(Colors.red.shade700),
-                ),
-            child: Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.red,
-                    offset: const Offset(4, 4),
-                    blurRadius: 0,
-                  ),
-                ],
-              ),
-              child: Text(
-                'REGISTER NOW! 💥',
-                style: GoogleFonts.fredoka(
-                  fontSize: isMobile ? 18 : 22,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Rules Section
-class _RulesSection extends StatelessWidget {
-  final CategoryDetailData data;
-
-  const _RulesSection({required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
-
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(isMobile ? 20 : 40),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.orange.withOpacity(0.3),
-            Colors.red.withOpacity(0.2),
-            Colors.purple.withOpacity(0.3),
-          ],
-        ),
-        border: Border.all(color: Colors.black, width: 4),
-      ),
-      child: Column(
-        children: [
-          FadeInDown(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              decoration: BoxDecoration(
-                color: Colors.orange,
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.black, width: 4),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black,
-                    offset: const Offset(6, 6),
-                    blurRadius: 0,
-                  ),
-                ],
-              ),
-              child: Text(
-                '📜 RULES & REGULATIONS 📜',
-                style: GoogleFonts.fredoka(
-                  fontSize: isMobile ? 20 : 28,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.black,
-                  letterSpacing: 1,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          SizedBox(height: isMobile ? 30 : 40),
-
-          ...data.rules.asMap().entries.map((entry) {
-            final index = entry.key;
-            final rule = entry.value;
-
-            return FadeInUp(
-              duration: const Duration(milliseconds: 600),
-              delay: Duration(milliseconds: index * 200),
-              child: Container(
-                width: double.infinity,
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: EdgeInsets.all(isMobile ? 16 : 20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.black, width: 4),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: const Offset(6, 6),
-                      blurRadius: 0,
-                    ),
-                  ],
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: isMobile ? 40 : 50,
-                      height: isMobile ? 40 : 50,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.black, width: 3),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black,
-                            offset: const Offset(3, 3),
-                            blurRadius: 0,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          '${index + 1}',
-                          style: GoogleFonts.fredoka(
-                            fontSize: isMobile ? 16 : 20,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: isMobile ? 16 : 20),
-                    Expanded(
-                      child: Text(
-                        rule,
-                        style: GoogleFonts.fredoka(
-                          fontSize: isMobile ? 14 : 20,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                          height: 1.5,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
-  }
-}
-
-// Judging Criteria Section
-class _JudgingCriteriaSection extends StatelessWidget {
-  final CategoryDetailData data;
-
-  const _JudgingCriteriaSection({required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
-
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(isMobile ? 20 : 40),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.blue.withOpacity(0.3),
-            Colors.purple.withOpacity(0.4),
-            Colors.pink.withOpacity(0.3),
-          ],
-        ),
-        border: Border.all(color: Colors.black, width: 4),
-      ),
-      child: Column(
-        children: [
-          FadeInDown(
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.purple,
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(color: Colors.black, width: 4),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black,
-                        offset: const Offset(6, 6),
-                        blurRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '⚖️',
-                        style: TextStyle(fontSize: isMobile ? 24 : 30),
-                      ),
-                      SizedBox(width: isMobile ? 8 : 12),
-                      Text(
-                        'JUDGING CRITERIA',
-                        style: GoogleFonts.fredoka(
-                          fontSize: isMobile ? 20 : 28,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      SizedBox(width: isMobile ? 8 : 12),
-                      Text(
-                        '⚖️',
-                        style: TextStyle(fontSize: isMobile ? 24 : 30),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: isMobile ? 12 : 16),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.black, width: 3),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black,
-                        offset: const Offset(3, 3),
-                        blurRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    'How your performance will be evaluated! 🎯',
-                    style: GoogleFonts.fredoka(
-                      fontSize: isMobile ? 14 : 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: isMobile ? 30 : 40),
-
-          isMobile
-              ? Column(
-                  children: data.judgingCriteria.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final criterion = entry.value;
-                    final colors = [
-                      Colors.purple,
-                      Colors.blue,
-                      Colors.green,
-                      Colors.orange,
-                      Colors.red,
-                    ];
-                    final color = colors[index % colors.length];
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: FadeInUp(
-                        duration: const Duration(milliseconds: 600),
-                        delay: Duration(milliseconds: index * 200),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.black, width: 4),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black,
-                                offset: const Offset(6, 6),
-                                blurRadius: 0,
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: color,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.black,
-                                    width: 3,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black,
-                                      offset: const Offset(3, 3),
-                                      blurRadius: 0,
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '${criterion.weightage}%',
-                                    style: GoogleFonts.fredoka(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Text(
-                                  criterion.parameter,
-                                  style: GoogleFonts.fredoka(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                )
-              : Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 20,
-                  runSpacing: 20,
-                  children: data.judgingCriteria.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final criterion = entry.value;
-                    final colors = [
-                      Colors.purple,
-                      Colors.blue,
-                      Colors.green,
-                      Colors.orange,
-                      Colors.red,
-                    ];
-                    final color = colors[index % colors.length];
-
-                    return FadeInUp(
-                      duration: const Duration(milliseconds: 600),
-                      delay: Duration(milliseconds: index * 200),
-                      child: Container(
-                        width: 280,
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.black, width: 4),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black,
-                              offset: const Offset(6, 6),
-                              blurRadius: 0,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 80,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                color: color,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.black,
-                                  width: 4,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black,
-                                    offset: const Offset(4, 4),
-                                    blurRadius: 0,
-                                  ),
-                                ],
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${criterion.weightage}%',
-                                  style: GoogleFonts.fredoka(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w900,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                  color: Colors.black,
-                                  width: 3,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black,
-                                    offset: const Offset(2, 2),
-                                    blurRadius: 0,
-                                  ),
-                                ],
-                              ),
-                              child: Text(
-                                criterion.parameter,
-                                style: GoogleFonts.fredoka(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
         ],
       ),
     );
@@ -3390,6 +2516,1312 @@ class _JudgingDialog extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// Participant Benefits Section - IFP Style
+class _ParticipantBenefitsSection extends StatelessWidget {
+  const _ParticipantBenefitsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(isMobile ? 20 : 40),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color(0xFFFFFF00), // Bright yellow like IFP
+            const Color(0xFFFF69B4), // Hot pink
+          ],
+        ),
+        border: Border.all(color: Colors.black, width: 6),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.4),
+            offset: const Offset(8, 8),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Main Header - IFP Style
+          FadeInDown(
+            duration: const Duration(milliseconds: 800),
+            child: Column(
+              children: [
+                Text(
+                  'WIN OR LOSE,',
+                  style: GoogleFonts.fredoka(
+                    fontSize: isMobile ? 32 : 48,
+                    fontWeight: FontWeight.w900,
+                    color: const Color(0xFFFF1493), // Deep pink
+                    letterSpacing: 2,
+                    shadows: [
+                      Shadow(
+                        offset: const Offset(4, 4),
+                        color: Colors.black,
+                        blurRadius: 0,
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  "DOESN'T MATTER!",
+                  style: GoogleFonts.fredoka(
+                    fontSize: isMobile ? 32 : 48,
+                    fontWeight: FontWeight.w900,
+                    color: const Color(0xFFFF1493), // Deep pink
+                    letterSpacing: 2,
+                    shadows: [
+                      Shadow(
+                        offset: const Offset(4, 4),
+                        color: Colors.black,
+                        blurRadius: 0,
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'PARTICIPANT WILL',
+                  style: GoogleFonts.fredoka(
+                    fontSize: isMobile ? 40 : 64,
+                    fontWeight: FontWeight.w900,
+                    color: const Color(0xFFFF1493), // Deep pink
+                    letterSpacing: 3,
+                    shadows: [
+                      Shadow(
+                        offset: const Offset(6, 6),
+                        color: Colors.black,
+                        blurRadius: 0,
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  'ALSO GET',
+                  style: GoogleFonts.fredoka(
+                    fontSize: isMobile ? 40 : 64,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.yellow.shade300,
+                    letterSpacing: 3,
+                    shadows: [
+                      Shadow(
+                        offset: const Offset(6, 6),
+                        color: Colors.black,
+                        blurRadius: 0,
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: isMobile ? 30 : 50),
+
+          // Benefits Cards
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 20,
+            runSpacing: 20,
+            children: [
+              _buildBenefitCard(
+                '📜',
+                'CERTIFICATE',
+                'Digital certificate of participation',
+                Colors.blue,
+                isMobile,
+              ),
+              _buildBenefitCard(
+                '🎯',
+                'FEEDBACK',
+                'Detailed performance feedback from judges',
+                Colors.green,
+                isMobile,
+              ),
+              _buildBenefitCard(
+                '🌟',
+                'PORTFOLIO',
+                'Add to your creative portfolio',
+                Colors.purple,
+                isMobile,
+              ),
+              // _buildBenefitCard(
+              //   '🎪',
+              //   'EXPERIENCE',
+              //   'Professional competition experience',
+              //   Colors.orange,
+              //   isMobile,
+              // ),
+              _buildBenefitCard(
+                '🤝',
+                'NETWORK',
+                'Connect with fellow creators',
+                Colors.cyan,
+                isMobile,
+              ),
+              _buildBenefitCard(
+                '📱',
+                'SHOWCASE',
+                'Feature on our social media',
+                Colors.red,
+                isMobile,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBenefitCard(
+    String emoji,
+    String title,
+    String description,
+    Color color,
+    bool isMobile,
+  ) {
+    return FadeInUp(
+      duration: const Duration(milliseconds: 600),
+      child: Container(
+        width: isMobile ? double.infinity : 300,
+        padding: EdgeInsets.all(isMobile ? 20 : 24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: Colors.black, width: 4),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              offset: const Offset(6, 6),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Text(emoji, style: TextStyle(fontSize: isMobile ? 40 : 50)),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.black, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    offset: const Offset(3, 3),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              child: Text(
+                title,
+                style: GoogleFonts.fredoka(
+                  fontSize: isMobile ? 16 : 18,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              description,
+              style: GoogleFonts.fredoka(
+                fontSize: isMobile ? 14 : 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Testimonials Section
+class _TestimonialsSection extends StatelessWidget {
+  const _TestimonialsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+
+    final testimonials = [
+      {
+        'name': 'Priya Sharma',
+        'college': 'Anna University',
+        'text':
+            'This competition gave me the confidence to pursue my dreams! The judges feedback was incredibly valuable.',
+        'emoji': '🎤',
+        'color': Colors.pink,
+      },
+      {
+        'name': 'Arjun Kumar',
+        'college': 'VIT Chennai',
+        'text':
+            'Amazing platform for young talents! Even though I didn\'t win, the experience was worth it.',
+        'emoji': '🎭',
+        'color': Colors.blue,
+      },
+      {
+        'name': 'Kavya Menon',
+        'college': 'SRM University',
+        'text':
+            'The networking opportunities were fantastic! I connected with so many creative minds.',
+        'emoji': '💃',
+        'color': Colors.green,
+      },
+      {
+        'name': 'Rajesh Patel',
+        'college': 'Loyola College',
+        'text':
+            'Professional setup and great organization. This is exactly what Tamil Nadu needed!',
+        'emoji': '🎬',
+        'color': Colors.orange,
+      },
+    ];
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(isMobile ? 20 : 40),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.purple.withOpacity(0.3),
+            Colors.blue.withOpacity(0.4),
+            Colors.cyan.withOpacity(0.3),
+          ],
+        ),
+        border: Border.all(color: Colors.black, width: 4),
+      ),
+      child: Column(
+        children: [
+          // Header
+          FadeInDown(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.purple,
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: Colors.black, width: 4),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    offset: const Offset(6, 6),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('💬', style: TextStyle(fontSize: isMobile ? 24 : 30)),
+                  SizedBox(width: isMobile ? 8 : 12),
+                  Text(
+                    'WHAT PARTICIPANTS SAY',
+                    style: GoogleFonts.fredoka(
+                      fontSize: isMobile ? 20 : 28,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  SizedBox(width: isMobile ? 8 : 12),
+                  Text('💬', style: TextStyle(fontSize: isMobile ? 24 : 30)),
+                ],
+              ),
+            ),
+          ),
+
+          SizedBox(height: isMobile ? 30 : 40),
+
+          // Testimonials Grid
+          isMobile
+              ? Column(
+                  children: testimonials.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final testimonial = entry.value;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: _buildTestimonialCard(
+                        testimonial,
+                        index,
+                        isMobile,
+                      ),
+                    );
+                  }).toList(),
+                )
+              : Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 20,
+                  runSpacing: 20,
+                  children: testimonials.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final testimonial = entry.value;
+                    return _buildTestimonialCard(testimonial, index, isMobile);
+                  }).toList(),
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTestimonialCard(
+    Map<String, dynamic> testimonial,
+    int index,
+    bool isMobile,
+  ) {
+    return FadeInUp(
+      duration: const Duration(milliseconds: 600),
+      delay: Duration(milliseconds: index * 200),
+      child: Container(
+        width: isMobile ? double.infinity : 300,
+        padding: EdgeInsets.all(isMobile ? 20 : 24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.black, width: 4),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              offset: const Offset(6, 6),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // Avatar and emoji
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: testimonial['color'],
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.black, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    offset: const Offset(3, 3),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  testimonial['emoji'],
+                  style: TextStyle(fontSize: 24),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Quote
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.black, width: 2),
+              ),
+              child: Text(
+                '"${testimonial['text']}"',
+                style: GoogleFonts.fredoka(
+                  fontSize: isMobile ? 14 : 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Name and college
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: testimonial['color'],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.black, width: 2),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    testimonial['name'],
+                    style: GoogleFonts.fredoka(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    testimonial['college'],
+                    style: GoogleFonts.fredoka(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Footer Section with Policies - Comic Style
+class _FooterSection extends StatelessWidget {
+  const _FooterSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(isMobile ? 20 : 40),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.deepPurple.shade900,
+            Colors.black,
+            Colors.indigo.shade900,
+          ],
+        ),
+        border: Border.all(color: Colors.yellow, width: 4),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.yellow.withOpacity(0.3),
+            offset: const Offset(0, -4),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Comic-style header with speech bubble
+          FadeInUp(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Main title container
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 20 : 30,
+                    vertical: isMobile ? 16 : 20,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.yellow, Colors.orange],
+                    ),
+                    borderRadius: BorderRadius.circular(25),
+                    border: Border.all(color: Colors.black, width: 4),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black,
+                        offset: const Offset(6, 6),
+                        blurRadius: 0,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '🎪',
+                            style: TextStyle(fontSize: isMobile ? 24 : 32),
+                          ),
+                          SizedBox(width: isMobile ? 8 : 12),
+                          Text(
+                            'COLLEGE THIRUVIZHA',
+                            style: GoogleFonts.fredoka(
+                              fontSize: isMobile ? 20 : 28,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black,
+                              letterSpacing: 2,
+                              shadows: [
+                                Shadow(
+                                  offset: const Offset(2, 2),
+                                  color: Colors.white,
+                                  blurRadius: 0,
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(width: isMobile ? 8 : 12),
+                          Text(
+                            '🎪',
+                            style: TextStyle(fontSize: isMobile ? 24 : 32),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: Colors.black, width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black,
+                              offset: const Offset(2, 2),
+                              blurRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'Tamil Nadu\'s Premier College Talent Festival',
+                          style: GoogleFonts.fredoka(
+                            fontSize: isMobile ? 12 : 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Comic burst effect in corners
+                Positioned(
+                  top: -10,
+                  left: -10,
+                  child: Text(
+                    '💥',
+                    style: TextStyle(fontSize: isMobile ? 20 : 24),
+                  ),
+                ),
+                Positioned(
+                  top: -10,
+                  right: -10,
+                  child: Text(
+                    '⚡',
+                    style: TextStyle(fontSize: isMobile ? 20 : 24),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: isMobile ? 30 : 40),
+
+          // Comic-style divider
+          Container(
+            height: 6,
+            width: isMobile ? 250 : 400,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.yellow, Colors.cyan, Colors.pink, Colors.green],
+              ),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.black, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black,
+                  offset: const Offset(3, 3),
+                  blurRadius: 0,
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: isMobile ? 30 : 40),
+
+          // Policy Links - Comic Style
+          FadeInUp(
+            delay: const Duration(milliseconds: 300),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.cyan,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.black, width: 3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black,
+                        offset: const Offset(4, 4),
+                        blurRadius: 0,
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    'IMPORTANT STUFF 📋',
+                    style: GoogleFonts.fredoka(
+                      fontSize: isMobile ? 16 : 20,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: isMobile ? 12 : 20,
+                  runSpacing: 16,
+                  children: [
+                    _buildComicPolicyLink(
+                      context,
+                      'Terms & Conditions',
+                      Icons.description,
+                      Colors.blue,
+                    ),
+                    _buildComicPolicyLink(
+                      context,
+                      'Privacy Policy',
+                      Icons.privacy_tip,
+                      Colors.green,
+                    ),
+                    _buildComicPolicyLink(
+                      context,
+                      'Refund Policy',
+                      Icons.payment,
+                      Colors.purple,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: isMobile ? 30 : 40),
+
+          // Contact info - Comic Style
+          FadeInUp(
+            delay: const Duration(milliseconds: 600),
+            child: Container(
+              padding: EdgeInsets.all(isMobile ? 20 : 24),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.indigo.shade800, Colors.purple.shade800],
+                ),
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: Colors.yellow, width: 4),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    offset: const Offset(6, 6),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.yellow,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.black, width: 3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black,
+                          offset: const Offset(3, 3),
+                          blurRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '📞',
+                          style: TextStyle(fontSize: isMobile ? 20 : 24),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'GET IN TOUCH',
+                          style: GoogleFonts.fredoka(
+                            fontSize: isMobile ? 16 : 20,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '📞',
+                          style: TextStyle(fontSize: isMobile ? 20 : 24),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Contact items
+                  isMobile
+                      ? Column(
+                          children: [
+                            _buildComicContactItem(
+                              Icons.email,
+                              'info@collegethiruvizha.com',
+                              Colors.cyan,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildComicContactItem(
+                              Icons.phone,
+                              '+91 12345 67890',
+                              Colors.green,
+                            ),
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildComicContactItem(
+                              Icons.email,
+                              'info@collegethiruvizha.com',
+                              Colors.cyan,
+                            ),
+                            const SizedBox(width: 40),
+                            _buildComicContactItem(
+                              Icons.phone,
+                              '+91 12345 67890',
+                              Colors.green,
+                            ),
+                          ],
+                        ),
+                ],
+              ),
+            ),
+          ),
+
+          SizedBox(height: isMobile ? 30 : 40),
+
+          // Comic-style social media section
+          FadeInUp(
+            delay: const Duration(milliseconds: 750),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.orange,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.black, width: 4),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    offset: const Offset(4, 4),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    'FOLLOW US! 🚀',
+                    style: GoogleFonts.fredoka(
+                      fontSize: isMobile ? 16 : 20,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildSocialButton('📘', 'Facebook', Colors.blue),
+                      const SizedBox(width: 12),
+                      _buildSocialButton('📸', 'Instagram', Colors.pink),
+                      const SizedBox(width: 12),
+                      _buildSocialButton('🐦', 'Twitter', Colors.cyan),
+                      const SizedBox(width: 12),
+                      _buildSocialButton('📺', 'YouTube', Colors.red),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          SizedBox(height: isMobile ? 30 : 40),
+
+          // Copyright - Comic Style
+          FadeInUp(
+            delay: const Duration(milliseconds: 900),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.white, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.2),
+                    offset: const Offset(0, 2),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('©️', style: TextStyle(fontSize: isMobile ? 16 : 20)),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      '${DateTime.now().year} College Thiruvizha. All rights reserved.',
+                      style: GoogleFonts.fredoka(
+                        fontSize: isMobile ? 12 : 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text('⚖️', style: TextStyle(fontSize: isMobile ? 16 : 20)),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildComicPolicyLink(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        _showPolicyDialog(context, title);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.black, width: 3),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              offset: const Offset(4, 4),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.white, size: 16),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: GoogleFonts.fredoka(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPolicyDialog(BuildContext context, String title) {
+    String content = _getPolicyContent(title);
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.9,
+              maxHeight: MediaQuery.of(context).size.height * 0.8,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.black, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    offset: const Offset(4, 4),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: _getPolicyColor(title),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(17),
+                        topRight: Radius.circular(17),
+                      ),
+                      border: const Border(
+                        bottom: BorderSide(color: Colors.black, width: 3),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _getPolicyIcon(title),
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: GoogleFonts.fredoka(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.black, width: 2),
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.black,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Content
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        content,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 14,
+                          height: 1.6,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Color _getPolicyColor(String title) {
+    switch (title) {
+      case 'Terms & Conditions':
+        return Colors.blue;
+      case 'Privacy Policy':
+        return Colors.green;
+      case 'Refund Policy':
+        return Colors.purple;
+      default:
+        return Colors.blue;
+    }
+  }
+
+  IconData _getPolicyIcon(String title) {
+    switch (title) {
+      case 'Terms & Conditions':
+        return Icons.description;
+      case 'Privacy Policy':
+        return Icons.privacy_tip;
+      case 'Refund Policy':
+        return Icons.payment;
+      default:
+        return Icons.description;
+    }
+  }
+
+  String _getPolicyContent(String title) {
+    switch (title) {
+      case 'Terms & Conditions':
+        return '''
+🎭 WELCOME TO COLLEGE THIRUVIZHA! 🎭
+
+By participating in our festival, you agree to these terms:
+
+📋 GENERAL CONDITIONS:
+• Registration is mandatory for all participants
+• Valid student ID required at all times
+• Follow all safety guidelines and instructions
+• Respect fellow participants and organizers
+• No outside food or beverages allowed
+• Photography/videography may occur for promotional use
+
+🏆 COMPETITION RULES:
+• Arrive 30 minutes before your event
+• Late arrivals may be disqualified
+• Decisions of judges are final
+• No electronic devices during competitions
+• Props and costumes are participant's responsibility
+• Time limits strictly enforced
+
+⚖️ CONDUCT:
+• Maintain decorum throughout the event
+• No harassment, discrimination, or inappropriate behavior
+• Dress code must be appropriate for the event
+• No alcohol, smoking, or prohibited substances
+• Violation may result in immediate disqualification
+
+📱 DIGITAL CONTENT:
+• Photos/videos may be used for marketing
+• Social media posts encouraged with official hashtags
+• Respect others' privacy when sharing content
+
+🎪 LIABILITY:
+• Participate at your own risk
+• Organizers not liable for personal injuries or loss
+• Insurance coverage recommended
+• Emergency contact information required
+
+💫 Have an amazing time at College Thiruvizha! 💫
+        ''';
+
+      case 'Privacy Policy':
+        return '''
+🔐 YOUR PRIVACY MATTERS! 🔐
+
+College Thiruvizha respects your privacy and protects your data:
+
+📊 INFORMATION WE COLLECT:
+• Name, email, phone number for registration
+• College/university details
+• Emergency contact information
+• Event preferences and participation history
+• Photos/videos during the event
+• Feedback and survey responses
+
+🎯 HOW WE USE YOUR DATA:
+• Event registration and management
+• Communication about festival updates
+• Certificate generation and distribution
+• Safety and emergency purposes
+• Marketing and promotional activities
+• Improving future events
+
+🔒 DATA PROTECTION:
+• Secure servers with encryption
+• Limited access to authorized personnel only
+• No sharing with third parties without consent
+• Regular security audits and updates
+• Data retention for 2 years maximum
+
+📧 COMMUNICATIONS:
+• Event-related notifications and updates
+• Certificate and results announcements
+• Feedback requests and surveys
+• Future event invitations (opt-out available)
+• Emergency communications if necessary
+
+📸 MEDIA CONSENT:
+• Photos/videos may be taken during events
+• Used for promotional and marketing purposes
+• Posted on social media and official websites
+• Contact us to request removal if needed
+
+🎪 YOUR RIGHTS:
+• Access your personal data anytime
+• Request corrections or updates
+• Delete your account and data
+• Opt-out of marketing communications
+• File complaints about data handling
+
+📞 CONTACT US:
+For privacy concerns, email: privacy@collegethiruvizha.com
+
+🌟 Your trust is our priority! 🌟
+        ''';
+
+      case 'Refund Policy':
+        return '''
+💰 REFUND POLICY 💰
+
+Understanding our refund terms for College Thiruvizha:
+
+🎫 REGISTRATION FEES:
+• Non-refundable processing fee: ₹50
+• Refundable amount varies by cancellation timing
+• Multiple event registrations handled separately
+• Group registrations follow same individual terms
+
+⏰ REFUND TIMELINE:
+• 7+ days before event: 80% refund
+• 3-6 days before event: 50% refund
+• 1-2 days before event: 25% refund
+• Day of event: No refund available
+• After event commencement: No refund
+
+🌧️ EVENT CANCELLATION:
+• Weather-related cancellations: Full refund
+• Technical issues by organizers: Full refund
+• Venue unavailability: Full refund or rescheduling
+• Force majeure events: Partial refund (50%)
+
+💳 REFUND PROCESS:
+• Submit refund request via official channels
+• Processing time: 7-14 business days
+• Refunds processed to original payment method
+• Bank charges may be deducted
+• Email confirmation sent upon processing
+
+🏥 MEDICAL EMERGENCIES:
+• Medical certificate required
+• Full refund minus processing fee
+• Request within 48 hours of event
+• Doctor's note must be recent
+• Emergency contact verification needed
+
+🎭 PARTICIPANT WITHDRAWAL:
+• Personal reasons: Standard timeline applies
+• Academic conflicts: 50% refund with proof
+• Family emergencies: Case-by-case basis
+• Travel restrictions: Partial consideration
+
+❌ NON-REFUNDABLE ITEMS:
+• Merchandise and souvenirs
+• Food and beverage purchases
+• Accommodation bookings
+• Third-party service fees
+• Special workshop materials
+
+📞 REFUND REQUESTS:
+Email: refunds@collegethiruvizha.com
+Include: Registration ID, reason, supporting documents
+
+💫 Questions? We're here to help! 💫
+        ''';
+
+      default:
+        return 'Policy content not available.';
+    }
+  }
+
+  Widget _buildComicContactItem(IconData icon, String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.black, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black,
+            offset: const Offset(2, 2),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.black, width: 2),
+            ),
+            child: Icon(icon, color: Colors.black, size: 16),
+          ),
+          const SizedBox(width: 12),
+          Flexible(
+            child: Text(
+              text,
+              style: GoogleFonts.fredoka(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSocialButton(String emoji, String platform, Color color) {
+    return GestureDetector(
+      onTap: () {
+        // TODO: Implement social media links
+      },
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.black, width: 3),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              offset: const Offset(2, 2),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        child: Center(child: Text(emoji, style: TextStyle(fontSize: 18))),
       ),
     );
   }

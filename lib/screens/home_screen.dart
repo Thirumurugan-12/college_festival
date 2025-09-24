@@ -7,11 +7,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:lottie/lottie.dart';
 import '../constants/app_colors.dart';
-import '../widgets/rules_dialog.dart';
+import 'category_detail_screen.dart';
 import '../widgets/glass_header.dart';
 import '../widgets/parallax_section.dart';
 import 'registration/phone_screen.dart';
-import 'category_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -384,11 +383,28 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           // Main background - homepage.jpg for Section 1, bg.jpg for others
           Positioned.fill(
-            child: Image.asset(
-              _bgIndex == 0 ? 'lib/assets/homepage.jpg' : 'lib/assets/bg.jpg',
-              fit: BoxFit.cover,
-              filterQuality: FilterQuality.high,
-              alignment: Alignment.center,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isMobile = constraints.maxWidth < 600;
+                String imageAsset;
+
+                if (_bgIndex == 0) {
+                  // Section 1: Use mobile_homepage.jpg on mobile, homepage.jpg on desktop
+                  imageAsset = isMobile
+                      ? 'lib/assets/mobile_homepage.jpg'
+                      : 'lib/assets/homepage.jpg';
+                } else {
+                  // Other sections: Use bg.jpg
+                  imageAsset = 'lib/assets/bg.jpg';
+                }
+
+                return Image.asset(
+                  imageAsset,
+                  fit: BoxFit.cover,
+                  filterQuality: FilterQuality.high,
+                  alignment: Alignment.center,
+                );
+              },
             ),
           ),
           // Left decoration background
@@ -543,7 +559,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
 
-                // Section 2: Manifesto (bold lines before "Who can participate")
+                // Section 2: Festival Manifesto with Rolling Text Animation
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final isWide = constraints.maxWidth >= 900;
@@ -552,29 +568,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     final bottomPad = isWide
                         ? (isShort ? 24.0 : 120.0)
                         : (isShort ? 8.0 : 72.0);
-
-                    TextStyle lineStyle(double base) => GoogleFonts.bebasNeue(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.0,
-                      height: 0.95,
-                      fontSize: isShort
-                          ? (base * 0.7)
-                          : (isWide
-                                ? base
-                                : (MediaQuery.of(context).size.width < 600
-                                      ? base * 0.8
-                                      : base * 0.9)),
-                    );
-
-                    final lines = <String>[
-                      'WE MADE A STAGE FOR THE ONES WHO DREAM',
-                      'THE VOICES THAT SOAR',
-                      'THE BEATS THAT MOVE HEARTS',
-                      'BIGGER • BOLDER • BETTER',
-                      'THE TALENTS THAT DARE',
-                      'AND THE ONES WHO WILL DEFINE THE SOUND OF TOMORROW',
-                    ];
 
                     return Padding(
                       padding: EdgeInsets.fromLTRB(16, 16, 16, bottomPad),
@@ -585,55 +578,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // Staggered bold lines
+                              // Rolling text animation
                               FadeInUp(
-                                duration: const Duration(milliseconds: 700),
-                                child: Text(
-                                  lines[0],
-                                  textAlign: TextAlign.center,
-                                  style: lineStyle(72),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              FadeInUp(
-                                duration: const Duration(milliseconds: 700),
-                                delay: const Duration(milliseconds: 80),
-                                child: Text(
-                                  lines[1],
-                                  textAlign: TextAlign.center,
-                                  style: lineStyle(68),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              FadeInUp(
-                                duration: const Duration(milliseconds: 700),
-                                delay: const Duration(milliseconds: 140),
-                                child: Text(
-                                  lines[2],
-                                  textAlign: TextAlign.center,
-                                  style: lineStyle(64),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              FadeInUp(
-                                duration: const Duration(milliseconds: 700),
-                                delay: const Duration(milliseconds: 200),
-                                child: Text(
-                                  lines[3],
-                                  textAlign: TextAlign.center,
-                                  style: lineStyle(
-                                    72,
-                                  ).copyWith(color: Colors.yellow),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              FadeInUp(
-                                duration: const Duration(milliseconds: 700),
-                                delay: const Duration(milliseconds: 260),
-                                child: Text(
-                                  lines[4],
-                                  textAlign: TextAlign.center,
-                                  style: lineStyle(68),
+                                duration: const Duration(milliseconds: 500),
+                                child: _FestivalRollingText(
+                                  isWide: isWide,
+                                  isShort: isShort,
                                 ),
                               ),
                             ],
@@ -725,11 +675,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               isWide,
                               isShort,
                             );
-                            // On mobile/narrow screens, keep header fixed and show a horizontal auto carousel for the cards
+                            // On mobile/narrow screens, show cards in a row format instead of swipable
                             if (!isWide) {
-                              final double cardH = isShort ? 100 : 180;
-                              final double itemW = (constraints.maxWidth - 64)
-                                  .clamp(240.0, 560.0);
+                              final double cardH = isShort ? 100 : 120;
+                              final double cardWidth =
+                                  (isShort ? 200 : 200) + 30;
+                              final double gap = isWide ? 0 : 8;
 
                               // Local open handlers (same as in _buildFeatureCards)
                               void openSinging() {
@@ -961,65 +912,62 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               }
 
-                              final items = [
-                                _CategoryCardSpec(
-                                  'lib/assets/singing.png',
-                                  cardH,
-                                  openSinging,
-                                ),
-                                _CategoryCardSpec(
-                                  'lib/assets/acting.png',
-                                  cardH,
-                                  openActing,
-                                ),
-                                _CategoryCardSpec(
-                                  'lib/assets/dance.png',
-                                  cardH,
-                                  openDance,
-                                ),
-                              ];
-
                               return Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   header,
                                   const SizedBox(height: 8),
-                                  Stack(
-                                    alignment: Alignment.center,
+                                  // Column layout for mobile cards
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      SizedBox(
-                                        height: cardH,
-                                        child: _AutoHorizontalCategoryCards(
-                                          height: cardH,
-                                          itemWidth: itemW,
-                                          speed: 3.0,
-                                          items: items,
+                                      Center(
+                                        child: SizedBox(
+                                          width: cardWidth,
+                                          child: GestureDetector(
+                                            onTap: openSinging,
+                                            child: _Section3Card(
+                                              asset: 'lib/assets/singing.png',
+                                              height: cardH,
+                                            ),
+                                          ),
                                         ),
                                       ),
-
-                                      // Swipe left Lottie animation aligned to the right
+                                      SizedBox(height: gap + 10),
+                                      Center(
+                                        child: SizedBox(
+                                          width: cardWidth,
+                                          child: GestureDetector(
+                                            onTap: openActing,
+                                            child: _Section3Card(
+                                              asset: 'lib/assets/acting.png',
+                                              height: cardH,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: gap + 10),
+                                      Center(
+                                        child: SizedBox(
+                                          width: cardWidth,
+                                          child: GestureDetector(
+                                            onTap: openDance,
+                                            child: _Section3Card(
+                                              asset: 'lib/assets/dance.png',
+                                              height: cardH,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 8),
-
                                   Text(
                                     'Tap a card to know more',
                                     style: GoogleFonts.montserrat(
                                       color: Colors.white70,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Container(
-                                    // top: 95,
-                                    // right: 56,
-                                    alignment: Alignment.centerRight,
-                                    child: Lottie.asset(
-                                      'lib/assets/swipe left.json',
-                                      width: 160,
-                                      height: 160,
-                                      fit: BoxFit.contain,
-                                      repeat: true,
                                     ),
                                   ),
                                 ],
@@ -1412,6 +1360,114 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           const SizedBox(height: 16),
+                          Wrap(
+                            spacing: 10,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: const Text('Privacy Policy'),
+                                      content: const SingleChildScrollView(
+                                        child: Text(
+                                          'Your privacy is important to us. We do not share your data with third parties except as required for festival operations. For full details, contact us.',
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(ctx).pop(),
+                                          child: const Text('Close'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 10,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: const Text('Privacy Policy'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: const Text('Terms & Conditions'),
+                                      content: const SingleChildScrollView(
+                                        child: Text(
+                                          'By participating, you agree to abide by all festival rules and decisions. Entries must be original and comply with guidelines. See website for full T&C.',
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(ctx).pop(),
+                                          child: const Text('Close'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 10,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: const Text('T&C'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: const Text('Refund Policy'),
+                                      content: const SingleChildScrollView(
+                                        child: Text(
+                                          'All registration fees are non-refundable except in case of event cancellation. For refund queries, contact support.',
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(ctx).pop(),
+                                          child: const Text('Close'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 10,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: const Text('Refund Policy'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
                           // Text('Newsletter', style: titleStyle(Colors.black)),
                           // const SizedBox(height: 8),
                           // Row(
@@ -1709,7 +1765,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         alignment: WrapAlignment.end,
                         children: [
                           ElevatedButton(
-                            onPressed: () => RulesDialog.show(context),
+                            onPressed: () =>
+                                _showCategorySelectionDialog(context),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               foregroundColor: Colors.white,
@@ -1758,7 +1815,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: () => RulesDialog.show(context),
+                              onPressed: () =>
+                                  _showCategorySelectionDialog(context),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.black,
                                 foregroundColor: Colors.white,
@@ -1898,6 +1956,344 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  // Rolling text widget for "A festival for..." animation
+  Widget _FestivalRollingText({required bool isWide, required bool isShort}) {
+    return _RollingTextWidget(
+      staticText: "A FESTIVAL FOR",
+      rollingTexts: const [
+        "students, by students.",
+        "creative sparks in colleges.",
+        "hidden talents to shine.",
+        "voices, moves, and expressions.",
+        "dreams to turn into applause.",
+        "the fearless stage performers.",
+        "every singer, dancer, actor.",
+        "college stars of tomorrow.",
+        "raw passion and pure creativity.",
+        "those who dare to showcase.",
+      ],
+      isWide: isWide,
+      isShort: isShort,
+    );
+  }
+
+  // Show fancy category selection dialog for rules
+  void _showCategorySelectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400, maxHeight: 800),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF1A1A2E),
+                  Color(0xFF16213E),
+                  Color(0xFF0F3460),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      FadeInDown(
+                        duration: const Duration(milliseconds: 600),
+                        child: Icon(
+                          Icons.gavel_rounded,
+                          color: Colors.yellow.shade400,
+                          size: 48,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      FadeInUp(
+                        duration: const Duration(milliseconds: 600),
+                        delay: const Duration(milliseconds: 100),
+                        child: Text(
+                          'Select Festival Category',
+                          style: GoogleFonts.bebasNeue(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      FadeInUp(
+                        duration: const Duration(milliseconds: 600),
+                        delay: const Duration(milliseconds: 200),
+                        child: Text(
+                          'Choose a category to view rules & guidelines',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Category Cards
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      FadeInUp(
+                        duration: const Duration(milliseconds: 700),
+                        delay: const Duration(milliseconds: 300),
+                        child: _CategoryCard(
+                          title: 'Singing',
+                          icon: Icons.mic_rounded,
+                          color: const Color(0xFFFF6B9D),
+                          onTap: () => _navigateToCategory(context, 'Singing'),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      FadeInUp(
+                        duration: const Duration(milliseconds: 700),
+                        delay: const Duration(milliseconds: 400),
+                        child: _CategoryCard(
+                          title: 'Dancing',
+                          icon: Icons.music_note_rounded,
+                          color: const Color(0xFF4ECDC4),
+                          onTap: () => _navigateToCategory(context, 'Dancing'),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      FadeInUp(
+                        duration: const Duration(milliseconds: 700),
+                        delay: const Duration(milliseconds: 500),
+                        child: _CategoryCard(
+                          title: 'Acting',
+                          icon: Icons.theater_comedy_rounded,
+                          color: const Color(0xFFFFD93D),
+                          onTap: () => _navigateToCategory(context, 'Acting'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Close Button
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: FadeInUp(
+                    duration: const Duration(milliseconds: 700),
+                    delay: const Duration(milliseconds: 600),
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white70,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _navigateToCategory(BuildContext context, String categoryName) {
+    Navigator.of(context).pop(); // Close dialog first
+
+    CategoryDetailData data;
+    String imageAsset;
+
+    switch (categoryName) {
+      case 'Singing':
+        data = CategoryDetailData(
+          categoryName: 'Singing',
+          mode: '100% Online',
+          participants: 'College students across Tamil Nadu',
+          timeline: '30 Days',
+          entryFormat: EntryFormat(
+            type: 'Solo Singing',
+            duration: 'Maximum 2 minutes per performance',
+            language: 'Tamil',
+            style: 'Original compositions or Cover songs allowed',
+            submissionFormat: 'Video',
+            songSelection: const ['Vaa Vaathi – Vaathi'],
+          ),
+          rules: const [
+            'One Entry Per Participant',
+            'Fresh Recordings Only',
+            'No Auto-tuning or Voice Modifications',
+            'Background Tracks Allowed',
+            'Songs with hate speech, explicit content, or plagiarism will be disqualified',
+            'Face and voice must match; no lip-syncing',
+            'No bots or fake accounts for audience votes',
+          ],
+          judgingCriteria: const [
+            JudgingCriterion('Vocal Quality', 30),
+            JudgingCriterion('Pitch & Rhythm', 25),
+            JudgingCriterion('Creativity & Originality', 20),
+            JudgingCriterion('Stage Presence', 15),
+            JudgingCriterion('Overall Presentation', 10),
+          ],
+          awards: const Awards(
+            winner:
+                '20,000 INR Cash Prize + Trophy + Certificate + Digital Badge + Social Media Feature',
+            runnerUp: '5,000 INR Cash Prize + Certificate + Digital Badge',
+            audienceChoice:
+                '2,500 INR Cash Prize + Certificate + Digital Badge',
+            topCollege: 'College-level Trophy for highest participation',
+          ),
+          voting: Voting(
+            deadline: DateTime(2025, 11, 5, 23, 59, 59),
+            platform: 'College Thiruvizha Website',
+            notes: 'One vote per entry per user',
+          ),
+          juryPanel: const [
+            'Playback Singers',
+            'Music Directors',
+            'Creedom Pro Mentors',
+          ],
+          importantNotes: const [
+            'Rights for winning entries remain with participants',
+            'College Thiruvizha may showcase entries on official platforms',
+            'Certificates will be issued digitally; trophies & prizes shipped to colleges',
+          ],
+        );
+        imageAsset = 'lib/assets/singing.png';
+        break;
+      case 'Dancing':
+        data = CategoryDetailData(
+          categoryName: 'Dance',
+          mode: '100% Online',
+          participants: 'College students across Tamil Nadu',
+          timeline: '30 Days',
+          entryFormat: const EntryFormat(
+            type: 'Solo/Group Dance',
+            duration: 'Maximum 3 minutes per performance',
+            language: '-',
+            style: 'Classical, Folk, or Contemporary',
+            submissionFormat: 'Video',
+          ),
+          rules: const [
+            'One Entry Per Participant',
+            'Original choreography preferred',
+            'No explicit or inappropriate content',
+            'Traditional or contemporary styles allowed',
+          ],
+          judgingCriteria: const [
+            JudgingCriterion('Technique & Skills', 30),
+            JudgingCriterion('Choreography & Creativity', 25),
+            JudgingCriterion('Expression & Performance', 20),
+            JudgingCriterion('Costume & Presentation', 15),
+            JudgingCriterion('Overall Impact', 10),
+          ],
+          awards: const Awards(
+            winner: 'TBA',
+            runnerUp: 'TBA',
+            audienceChoice: 'TBA',
+            topCollege: 'TBA',
+          ),
+          voting: Voting(
+            deadline: DateTime(2025, 11, 5, 23, 59, 59),
+            platform: 'College Thiruvizha Website',
+            notes: 'One vote per entry per user',
+          ),
+          juryPanel: const [
+            'Professional Dancers',
+            'Choreographers',
+            'Cultural Experts',
+          ],
+          importantNotes: const ['Details to be announced.'],
+        );
+        imageAsset = 'lib/assets/dance.png';
+        break;
+      case 'Acting':
+        data = CategoryDetailData(
+          categoryName: 'Acting',
+          mode: '100% Online',
+          participants: 'College students across Tamil Nadu',
+          timeline: '30 Days',
+          entryFormat: const EntryFormat(
+            type: 'Solo Acting',
+            duration: 'Maximum 2 minutes per performance',
+            language: 'Tamil/English',
+            style: 'Monologue or Dialogue',
+            submissionFormat: 'Video',
+          ),
+          rules: const [
+            'One Entry Per Participant',
+            'Original performances preferred',
+            'No explicit or hateful content',
+          ],
+          judgingCriteria: const [
+            JudgingCriterion('Expression & Emotion', 30),
+            JudgingCriterion('Dialogue Delivery', 25),
+            JudgingCriterion('Originality', 20),
+            JudgingCriterion('Stage Presence', 15),
+            JudgingCriterion('Overall Presentation', 10),
+          ],
+          awards: const Awards(
+            winner: 'TBA',
+            runnerUp: 'TBA',
+            audienceChoice: 'TBA',
+            topCollege: 'TBA',
+          ),
+          voting: Voting(
+            deadline: DateTime(2025, 11, 5, 23, 59, 59),
+            platform: 'College Thiruvizha Website',
+            notes: 'One vote per entry per user',
+          ),
+          juryPanel: const ['Film Artists', 'Directors', 'Creedom Pro Mentors'],
+          importantNotes: const ['Details to be announced.'],
+        );
+        imageAsset = 'lib/assets/acting.png';
+        break;
+      default:
+        return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) =>
+            CategoryDetailScreen(data: data, imageAsset: imageAsset),
       ),
     );
   }
@@ -2889,6 +3285,233 @@ class _ScrollDownIndicatorState extends State<_ScrollDownIndicator>
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+// Rolling text widget for animated text changes
+class _RollingTextWidget extends StatefulWidget {
+  final String staticText;
+  final List<String> rollingTexts;
+  final bool isWide;
+  final bool isShort;
+
+  const _RollingTextWidget({
+    required this.staticText,
+    required this.rollingTexts,
+    required this.isWide,
+    required this.isShort,
+  });
+
+  @override
+  State<_RollingTextWidget> createState() => _RollingTextWidgetState();
+}
+
+class _RollingTextWidgetState extends State<_RollingTextWidget>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  Timer? _timer;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+      ),
+    );
+
+    _slideAnimation = Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.0, 0.6, curve: Curves.easeOutBack),
+          ),
+        );
+
+    // Start the animation cycle
+    _startAnimation();
+  }
+
+  void _startAnimation() {
+    _controller.forward();
+
+    _timer = Timer.periodic(const Duration(milliseconds: 1200), (timer) {
+      if (mounted) {
+        _controller.reverse().then((_) {
+          if (mounted) {
+            setState(() {
+              _currentIndex = (_currentIndex + 1) % widget.rollingTexts.length;
+            });
+            _controller.forward();
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final staticTextStyle = GoogleFonts.bebasNeue(
+      color: Colors.white,
+      fontWeight: FontWeight.w900,
+      letterSpacing: 1.2,
+      height: 1.1,
+      fontSize: widget.isShort
+          ? 32
+          : (widget.isWide
+                ? 64
+                : (MediaQuery.of(context).size.width < 600 ? 36 : 48)),
+    );
+
+    final rollingTextStyle = GoogleFonts.bebasNeue(
+      color: Colors.yellow,
+      fontWeight: FontWeight.w900,
+      letterSpacing: 1.2,
+      height: 1.1,
+      fontSize: widget.isShort
+          ? 32
+          : (widget.isWide
+                ? 64
+                : (MediaQuery.of(context).size.width < 600 ? 36 : 48)),
+    );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Static text
+        Text(
+          widget.staticText,
+          textAlign: TextAlign.center,
+          style: staticTextStyle,
+        ),
+        const SizedBox(height: 16),
+        // Rolling/animated text
+        SizedBox(
+          height: widget.isShort ? 45 : (widget.isWide ? 80 : 55),
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: Text(
+                    widget.rollingTexts[_currentIndex],
+                    textAlign: TextAlign.center,
+                    style: rollingTextStyle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Custom category card widget for the selection dialog
+class _CategoryCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _CategoryCard({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [color.withOpacity(0.8), color.withOpacity(0.6)],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.3),
+              blurRadius: 12,
+              spreadRadius: 2,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: Colors.white, size: 28),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.bebasNeue(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  Text(
+                    'View rules & guidelines',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.white.withOpacity(0.8),
+              size: 18,
+            ),
+          ],
+        ),
       ),
     );
   }
