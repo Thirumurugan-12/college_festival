@@ -6,11 +6,13 @@ import 'dart:async';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:lottie/lottie.dart';
+import 'package:go_router/go_router.dart';
 import '../constants/app_colors.dart';
-import 'category_detail_screen.dart';
+
 import '../widgets/glass_header.dart';
 import '../widgets/parallax_section.dart';
 import 'registration/phone_screen.dart';
+import '../routes/app_routes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -131,191 +133,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final double gap = isWide ? 0 : 4;
 
     void openSinging() {
-      final data = CategoryDetailData(
-        categoryName: 'Singing',
-        mode: '100% Online',
-        participants: 'College students across Tamil Nadu',
-        timeline: '30 Days',
-        entryFormat: EntryFormat(
-          type: 'Solo Singing',
-          duration: 'Maximum 2 minutes per performance',
-          language: 'Tamil',
-          style: 'Original compositions or Cover songs allowed',
-          submissionFormat: 'Video',
-          songSelection: const [
-            'Ennavale Adi Ennavale – Kadhalan',
-            'Unnai Kaanadhu Naan – Vishwaroopam',
-            'Kanne Kalaimane – Moondram Pirai',
-            'Mandram Vandha – Mouna Ragam',
-            'Chinna Chinna Vannakuyil – Mouna Ragam',
-            'Ilaya Nila – Payanangal Mudivathillai',
-            'Malargale Malargale – Love Birds',
-            'Putham Pudhu Kaalai – Alaigal Oivathillai',
-            'Paadariyen Padippariyen – Sindhu Bhairavi',
-            'Raja Raja Chozhan – Rettai Vaal Kuruvi',
-            'Tum Tum – Enemy',
-            'Vaathi Coming – Master',
-            'Naan Pizhai – Kaathuvaakula Rendu Kaadhal',
-            'Mallipoo – Vendhu Thanindhathu Kaadu',
-            'Aalaporan Tamizhan – Mersal',
-            'So Baby – Doctor',
-            'Kaarkuzhal Kadavaiye – Karnan',
-            'Aval – Manithan',
-            'Adiye – Bachelor',
-            'Vaa Vaathi – Vaathi',
-          ],
-        ),
-        rules: const [
-          'One Entry Per Participant',
-          'Fresh Recordings Only',
-          'No Auto-tuning or Voice Modifications',
-          'Background Tracks Allowed',
-          'Songs with hate speech, explicit content, or plagiarism will be disqualified',
-          'Face and voice must match; no lip-syncing',
-          'No bots or fake accounts for audience votes',
-        ],
-        judgingCriteria: const [
-          JudgingCriterion('Vocal Quality', 30),
-          JudgingCriterion('Pitch & Rhythm', 25),
-          JudgingCriterion('Expression & Emotion', 20),
-          JudgingCriterion('Creativity & Song Choice', 15),
-          JudgingCriterion('Overall Presentation', 10),
-        ],
-        awards: const Awards(
-          winner:
-              '20,000 INR Cash Prize + Trophy + Certificate + Digital Badge + Social Media Feature',
-          runnerUp: '5,000 INR Cash Prize + Certificate + Digital Badge',
-          audienceChoice: '2,500 INR Cash Prize + Certificate + Digital Badge',
-          topCollege: 'College-level Trophy for highest participation',
-        ),
-        voting: Voting(
-          deadline: DateTime(2025, 11, 5, 23, 59, 59),
-          platform: 'College Thiruvizha Website',
-          notes: 'One vote per entry per user',
-        ),
-        juryPanel: const [
-          'Playback Singers',
-          'Music Directors',
-          'Creedom Pro Mentors',
-        ],
-        importantNotes: const [
-          'Rights for winning entries remain with participants',
-          'College Thiruvizha may showcase entries on official platforms',
-          'Certificates will be issued digitally; trophies & prizes shipped to colleges',
-        ],
-      );
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => CategoryDetailScreen(
-            data: data,
-            imageAsset: 'lib/assets/singing.png',
-          ),
-        ),
-      );
+      context.go(AppRoutes.singing);
     }
 
     void openActing() {
-      final data = CategoryDetailData(
-        categoryName: 'Acting',
-        mode: '100% Online',
-        participants: 'College students across Tamil Nadu',
-        timeline: '30 Days',
-        entryFormat: const EntryFormat(
-          type: 'Solo Acting',
-          duration: 'Maximum 2 minutes per performance',
-          language: 'Tamil/English',
-          style: 'Monologue or Dialogue',
-          submissionFormat: 'Video',
-        ),
-        rules: const [
-          'One Entry Per Participant',
-          'Original performances preferred',
-          'No explicit or hateful content',
-        ],
-        judgingCriteria: const [
-          JudgingCriterion('Expression & Emotion', 30),
-          JudgingCriterion('Dialogue Delivery', 25),
-          JudgingCriterion('Originality', 20),
-          JudgingCriterion('Stage Presence', 15),
-          JudgingCriterion('Overall Presentation', 10),
-        ],
-        awards: const Awards(
-          winner: 'TBA',
-          runnerUp: 'TBA',
-          audienceChoice: 'TBA',
-          topCollege: 'TBA',
-        ),
-        voting: Voting(
-          deadline: DateTime(2025, 11, 5, 23, 59, 59),
-          platform: 'College Thiruvizha Website',
-          notes: 'One vote per entry per user',
-        ),
-        juryPanel: const ['Film Artists', 'Directors', 'Creedom Pro Mentors'],
-        importantNotes: const ['Details to be announced.'],
-      );
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => CategoryDetailScreen(
-            data: data,
-            imageAsset: 'lib/assets/acting.png',
-          ),
-        ),
-      );
+      context.go(AppRoutes.acting);
     }
 
     void openDance() {
-      final data = CategoryDetailData(
-        categoryName: 'Dance',
-        mode: '100% Online',
-        participants: 'College students across Tamil Nadu',
-        timeline: '30 Days',
-        entryFormat: const EntryFormat(
-          type: 'Solo/Group Dance',
-          duration: 'Maximum 3 minutes per performance',
-          language: '-',
-          style: 'Classical, Folk, or Contemporary',
-          submissionFormat: 'Video',
-        ),
-        rules: const [
-          'One Entry Per Participant',
-          'Original choreography preferred',
-          'No explicit or inappropriate content',
-          'Traditional or contemporary styles allowed',
-        ],
-        judgingCriteria: const [
-          JudgingCriterion('Technique & Skills', 30),
-          JudgingCriterion('Choreography & Creativity', 25),
-          JudgingCriterion('Expression & Performance', 20),
-          JudgingCriterion('Costume & Presentation', 15),
-          JudgingCriterion('Overall Impact', 10),
-        ],
-        awards: const Awards(
-          winner: 'TBA',
-          runnerUp: 'TBA',
-          audienceChoice: 'TBA',
-          topCollege: 'TBA',
-        ),
-        voting: Voting(
-          deadline: DateTime(2025, 11, 5, 23, 59, 59),
-          platform: 'College Thiruvizha Website',
-          notes: 'One vote per entry per user',
-        ),
-        juryPanel: const [
-          'Professional Dancers',
-          'Choreographers',
-          'Cultural Experts',
-        ],
-        importantNotes: const ['Details to be announced.'],
-      );
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => CategoryDetailScreen(
-            data: data,
-            imageAsset: 'lib/assets/dance.png',
-          ),
-        ),
-      );
+      context.go(AppRoutes.dancing);
     }
 
     // 3 cards layout: Singing on top, Acting and Dance below
@@ -684,232 +510,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               // Local open handlers (same as in _buildFeatureCards)
                               void openSinging() {
-                                final data = CategoryDetailData(
-                                  categoryName: 'Singing',
-                                  mode: '100% Online',
-                                  participants:
-                                      'College students across Tamil Nadu',
-                                  timeline: '30 Days',
-                                  entryFormat: EntryFormat(
-                                    type: 'Solo Singing',
-                                    duration:
-                                        'Maximum 2 minutes per performance',
-                                    language: 'Tamil',
-                                    style:
-                                        'Original compositions or Cover songs allowed',
-                                    submissionFormat: 'Video',
-                                    songSelection: const [
-                                      'Ennavale Adi Ennavale – Kadhalan',
-                                      'Unnai Kaanadhu Naan – Vishwaroopam',
-                                      'Kanne Kalaimane – Moondram Pirai',
-                                      'Mandram Vandha – Mouna Ragam',
-                                      'Chinna Chinna Vannakuyil – Mouna Ragam',
-                                      'Ilaya Nila – Payanangal Mudivathillai',
-                                      'Malargale Malargale – Love Birds',
-                                      'Putham Pudhu Kaalai – Alaigal Oivathillai',
-                                      'Paadariyen Padippariyen – Sindhu Bhairavi',
-                                      'Raja Raja Chozhan – Rettai Vaal Kuruvi',
-                                      'Tum Tum – Enemy',
-                                      'Vaathi Coming – Master',
-                                      'Naan Pizhai – Kaathuvaakula Rendu Kaadhal',
-                                      'Mallipoo – Vendhu Thanindhathu Kaadu',
-                                      'Aalaporan Tamizhan – Mersal',
-                                      'So Baby – Doctor',
-                                      'Kaarkuzhal Kadavaiye – Karnan',
-                                      'Aval – Manithan',
-                                      'Adiye – Bachelor',
-                                      'Vaa Vaathi – Vaathi',
-                                    ],
-                                  ),
-                                  rules: const [
-                                    'One Entry Per Participant',
-                                    'Fresh Recordings Only',
-                                    'No Auto-tuning or Voice Modifications',
-                                    'Background Tracks Allowed',
-                                    'Songs with hate speech, explicit content, or plagiarism will be disqualified',
-                                    'Face and voice must match; no lip-syncing',
-                                    'No bots or fake accounts for audience votes',
-                                  ],
-                                  judgingCriteria: const [
-                                    JudgingCriterion('Vocal Quality', 30),
-                                    JudgingCriterion('Pitch & Rhythm', 25),
-                                    JudgingCriterion(
-                                      'Expression & Emotion',
-                                      20,
-                                    ),
-                                    JudgingCriterion(
-                                      'Creativity & Song Choice',
-                                      15,
-                                    ),
-                                    JudgingCriterion(
-                                      'Overall Presentation',
-                                      10,
-                                    ),
-                                  ],
-                                  awards: const Awards(
-                                    winner:
-                                        '20,000 INR Cash Prize + Trophy + Certificate + Digital Badge + Social Media Feature',
-                                    runnerUp:
-                                        '5,000 INR Cash Prize + Certificate + Digital Badge',
-                                    audienceChoice:
-                                        '2,500 INR Cash Prize + Certificate + Digital Badge',
-                                    topCollege:
-                                        'College-level Trophy for highest participation',
-                                  ),
-                                  voting: Voting(
-                                    deadline: DateTime(2025, 11, 5, 23, 59, 59),
-                                    platform: 'College Thiruvizha Website',
-                                    notes: 'One vote per entry per user',
-                                  ),
-                                  juryPanel: const [
-                                    'Playback Singers',
-                                    'Music Directors',
-                                    'Creedom Pro Mentors',
-                                  ],
-                                  importantNotes: const [
-                                    'Rights for winning entries remain with participants',
-                                    'College Thiruvizha may showcase entries on official platforms',
-                                    'Certificates will be issued digitally; trophies & prizes shipped to colleges',
-                                  ],
-                                );
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => CategoryDetailScreen(
-                                      data: data,
-                                      imageAsset: 'lib/assets/singing.png',
-                                    ),
-                                  ),
-                                );
+                                context.go(AppRoutes.singing);
                               }
 
                               void openActing() {
-                                final data = CategoryDetailData(
-                                  categoryName: 'Acting',
-                                  mode: '100% Online',
-                                  participants:
-                                      'College students across Tamil Nadu',
-                                  timeline: '30 Days',
-                                  entryFormat: const EntryFormat(
-                                    type: 'Solo Acting',
-                                    duration:
-                                        'Maximum 2 minutes per performance',
-                                    language: 'Tamil/English',
-                                    style: 'Monologue or Dialogue',
-                                    submissionFormat: 'Video',
-                                  ),
-                                  rules: const [
-                                    'One Entry Per Participant',
-                                    'Original performances preferred',
-                                    'No explicit or hateful content',
-                                  ],
-                                  judgingCriteria: const [
-                                    JudgingCriterion(
-                                      'Expression & Emotion',
-                                      30,
-                                    ),
-                                    JudgingCriterion('Dialogue Delivery', 25),
-                                    JudgingCriterion('Originality', 20),
-                                    JudgingCriterion('Stage Presence', 15),
-                                    JudgingCriterion(
-                                      'Overall Presentation',
-                                      10,
-                                    ),
-                                  ],
-                                  awards: const Awards(
-                                    winner: 'TBA',
-                                    runnerUp: 'TBA',
-                                    audienceChoice: 'TBA',
-                                    topCollege: 'TBA',
-                                  ),
-                                  voting: Voting(
-                                    deadline: DateTime(2025, 11, 5, 23, 59, 59),
-                                    platform: 'College Thiruvizha Website',
-                                    notes: 'One vote per entry per user',
-                                  ),
-                                  juryPanel: const [
-                                    'Film Artists',
-                                    'Directors',
-                                    'Creedom Pro Mentors',
-                                  ],
-                                  importantNotes: const [
-                                    'Details to be announced.',
-                                  ],
-                                );
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => CategoryDetailScreen(
-                                      data: data,
-                                      imageAsset: 'lib/assets/acting.png',
-                                    ),
-                                  ),
-                                );
+                                context.go(AppRoutes.acting);
                               }
 
                               void openDance() {
-                                final data = CategoryDetailData(
-                                  categoryName: 'Dance',
-                                  mode: '100% Online',
-                                  participants:
-                                      'College students across Tamil Nadu',
-                                  timeline: '30 Days',
-                                  entryFormat: const EntryFormat(
-                                    type: 'Solo/Group Dance',
-                                    duration:
-                                        'Maximum 3 minutes per performance',
-                                    language: '-',
-                                    style: 'Classical, Folk, or Contemporary',
-                                    submissionFormat: 'Video',
-                                  ),
-                                  rules: const [
-                                    'One Entry Per Participant',
-                                    'Original choreography preferred',
-                                    'No explicit or inappropriate content',
-                                    'Traditional or contemporary styles allowed',
-                                  ],
-                                  judgingCriteria: const [
-                                    JudgingCriterion('Technique & Skills', 30),
-                                    JudgingCriterion(
-                                      'Choreography & Creativity',
-                                      25,
-                                    ),
-                                    JudgingCriterion(
-                                      'Expression & Performance',
-                                      20,
-                                    ),
-                                    JudgingCriterion(
-                                      'Costume & Presentation',
-                                      15,
-                                    ),
-                                    JudgingCriterion('Overall Impact', 10),
-                                  ],
-                                  awards: const Awards(
-                                    winner: 'TBA',
-                                    runnerUp: 'TBA',
-                                    audienceChoice: 'TBA',
-                                    topCollege: 'TBA',
-                                  ),
-                                  voting: Voting(
-                                    deadline: DateTime(2025, 11, 5, 23, 59, 59),
-                                    platform: 'College Thiruvizha Website',
-                                    notes: 'One vote per entry per user',
-                                  ),
-                                  juryPanel: const [
-                                    'Professional Dancers',
-                                    'Choreographers',
-                                    'Cultural Experts',
-                                  ],
-                                  importantNotes: const [
-                                    'Details to be announced.',
-                                  ],
-                                );
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => CategoryDetailScreen(
-                                      data: data,
-                                      imageAsset: 'lib/assets/dance.png',
-                                    ),
-                                  ),
-                                );
+                                context.go(AppRoutes.dancing);
                               }
 
                               return Column(
@@ -2073,7 +1682,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: _CategoryCard(
                           title: 'Singing',
                           icon: Icons.mic_rounded,
-                          color: const Color(0xFFFF6B9D),
+                          color: Colors.blueAccent,
                           onTap: () => _navigateToCategory(context, 'Singing'),
                         ),
                       ),
@@ -2084,7 +1693,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: _CategoryCard(
                           title: 'Dancing',
                           icon: Icons.music_note_rounded,
-                          color: const Color(0xFF4ECDC4),
+                          color: Colors.greenAccent,
                           onTap: () => _navigateToCategory(context, 'Dancing'),
                         ),
                       ),
@@ -2095,7 +1704,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: _CategoryCard(
                           title: 'Acting',
                           icon: Icons.theater_comedy_rounded,
-                          color: const Color(0xFFFFD93D),
+                          color: Colors.purpleAccent,
                           onTap: () => _navigateToCategory(context, 'Acting'),
                         ),
                       ),
@@ -2139,163 +1748,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void _navigateToCategory(BuildContext context, String categoryName) {
     Navigator.of(context).pop(); // Close dialog first
 
-    CategoryDetailData data;
-    String imageAsset;
-
     switch (categoryName) {
       case 'Singing':
-        data = CategoryDetailData(
-          categoryName: 'Singing',
-          mode: '100% Online',
-          participants: 'College students across Tamil Nadu',
-          timeline: '30 Days',
-          entryFormat: EntryFormat(
-            type: 'Solo Singing',
-            duration: 'Maximum 2 minutes per performance',
-            language: 'Tamil',
-            style: 'Original compositions or Cover songs allowed',
-            submissionFormat: 'Video',
-            songSelection: const ['Vaa Vaathi – Vaathi'],
-          ),
-          rules: const [
-            'One Entry Per Participant',
-            'Fresh Recordings Only',
-            'No Auto-tuning or Voice Modifications',
-            'Background Tracks Allowed',
-            'Songs with hate speech, explicit content, or plagiarism will be disqualified',
-            'Face and voice must match; no lip-syncing',
-            'No bots or fake accounts for audience votes',
-          ],
-          judgingCriteria: const [
-            JudgingCriterion('Vocal Quality', 30),
-            JudgingCriterion('Pitch & Rhythm', 25),
-            JudgingCriterion('Creativity & Originality', 20),
-            JudgingCriterion('Stage Presence', 15),
-            JudgingCriterion('Overall Presentation', 10),
-          ],
-          awards: const Awards(
-            winner:
-                '20,000 INR Cash Prize + Trophy + Certificate + Digital Badge + Social Media Feature',
-            runnerUp: '5,000 INR Cash Prize + Certificate + Digital Badge',
-            audienceChoice:
-                '2,500 INR Cash Prize + Certificate + Digital Badge',
-            topCollege: 'College-level Trophy for highest participation',
-          ),
-          voting: Voting(
-            deadline: DateTime(2025, 11, 5, 23, 59, 59),
-            platform: 'College Thiruvizha Website',
-            notes: 'One vote per entry per user',
-          ),
-          juryPanel: const [
-            'Playback Singers',
-            'Music Directors',
-            'Creedom Pro Mentors',
-          ],
-          importantNotes: const [
-            'Rights for winning entries remain with participants',
-            'College Thiruvizha may showcase entries on official platforms',
-            'Certificates will be issued digitally; trophies & prizes shipped to colleges',
-          ],
-        );
-        imageAsset = 'lib/assets/singing.png';
+        context.go(AppRoutes.singing);
         break;
       case 'Dancing':
-        data = CategoryDetailData(
-          categoryName: 'Dance',
-          mode: '100% Online',
-          participants: 'College students across Tamil Nadu',
-          timeline: '30 Days',
-          entryFormat: const EntryFormat(
-            type: 'Solo/Group Dance',
-            duration: 'Maximum 3 minutes per performance',
-            language: '-',
-            style: 'Classical, Folk, or Contemporary',
-            submissionFormat: 'Video',
-          ),
-          rules: const [
-            'One Entry Per Participant',
-            'Original choreography preferred',
-            'No explicit or inappropriate content',
-            'Traditional or contemporary styles allowed',
-          ],
-          judgingCriteria: const [
-            JudgingCriterion('Technique & Skills', 30),
-            JudgingCriterion('Choreography & Creativity', 25),
-            JudgingCriterion('Expression & Performance', 20),
-            JudgingCriterion('Costume & Presentation', 15),
-            JudgingCriterion('Overall Impact', 10),
-          ],
-          awards: const Awards(
-            winner: 'TBA',
-            runnerUp: 'TBA',
-            audienceChoice: 'TBA',
-            topCollege: 'TBA',
-          ),
-          voting: Voting(
-            deadline: DateTime(2025, 11, 5, 23, 59, 59),
-            platform: 'College Thiruvizha Website',
-            notes: 'One vote per entry per user',
-          ),
-          juryPanel: const [
-            'Professional Dancers',
-            'Choreographers',
-            'Cultural Experts',
-          ],
-          importantNotes: const ['Details to be announced.'],
-        );
-        imageAsset = 'lib/assets/dance.png';
+        context.go(AppRoutes.dancing);
         break;
       case 'Acting':
-        data = CategoryDetailData(
-          categoryName: 'Acting',
-          mode: '100% Online',
-          participants: 'College students across Tamil Nadu',
-          timeline: '30 Days',
-          entryFormat: const EntryFormat(
-            type: 'Solo Acting',
-            duration: 'Maximum 2 minutes per performance',
-            language: 'Tamil/English',
-            style: 'Monologue or Dialogue',
-            submissionFormat: 'Video',
-          ),
-          rules: const [
-            'One Entry Per Participant',
-            'Original performances preferred',
-            'No explicit or hateful content',
-          ],
-          judgingCriteria: const [
-            JudgingCriterion('Expression & Emotion', 30),
-            JudgingCriterion('Dialogue Delivery', 25),
-            JudgingCriterion('Originality', 20),
-            JudgingCriterion('Stage Presence', 15),
-            JudgingCriterion('Overall Presentation', 10),
-          ],
-          awards: const Awards(
-            winner: 'TBA',
-            runnerUp: 'TBA',
-            audienceChoice: 'TBA',
-            topCollege: 'TBA',
-          ),
-          voting: Voting(
-            deadline: DateTime(2025, 11, 5, 23, 59, 59),
-            platform: 'College Thiruvizha Website',
-            notes: 'One vote per entry per user',
-          ),
-          juryPanel: const ['Film Artists', 'Directors', 'Creedom Pro Mentors'],
-          importantNotes: const ['Details to be announced.'],
-        );
-        imageAsset = 'lib/assets/acting.png';
+        context.go(AppRoutes.acting);
         break;
-      default:
-        return;
     }
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) =>
-            CategoryDetailScreen(data: data, imageAsset: imageAsset),
-      ),
-    );
   }
 }
 

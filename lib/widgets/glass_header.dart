@@ -104,8 +104,8 @@ class GlassHeader extends StatelessWidget implements PreferredSizeWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            'lib/assets/creedom_logo_color.png',
-            height: 28,
+            'lib/assets/Creedom_logo-01.png',
+            height: 35,
             fit: BoxFit.contain,
             filterQuality: FilterQuality.low,
           ),
