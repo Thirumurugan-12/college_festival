@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constants/app_colors.dart';
-import 'screens/home_screen.dart';
+import 'routes/app_routes.dart';
 import 'widgets/floating_icons_background.dart';
 
 void main() {
@@ -13,9 +13,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Rhythm & Waves Fest',
       debugShowCheckedModeBanner: false,
+      routerConfig: AppRoutes.router,
       theme: ThemeData(
         primaryColor: AppColors.accentPink,
         scaffoldBackgroundColor: Colors.black,
@@ -36,7 +37,6 @@ class MyApp extends StatelessWidget {
           if (child != null) child,
         ],
       ),
-      home: const HomeScreen(),
     );
   }
 }

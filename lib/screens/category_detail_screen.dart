@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'registration/phone_screen.dart';
@@ -163,6 +164,83 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
     super.dispose();
   }
 
+  // Get dynamic header color based on category
+  Color _getHeaderColor() {
+    switch (widget.data.categoryName.toLowerCase()) {
+      case 'singing':
+        return const Color(0xFF1E3A8A); // Deep blue
+      case 'dancing':
+      case 'dance':
+        return const Color(0xFF166534); // Deep green
+      case 'acting':
+        return const Color(0xFF581C87); // Deep purple
+      default:
+        return const Color(0xFF1E3A8A); // Default blue
+    }
+  }
+
+  // Get dynamic gradient for background sections based on category
+  LinearGradient _getCategoryGradient() {
+    switch (widget.data.categoryName.toLowerCase()) {
+      case 'singing':
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF002157), // Deep blue
+            Color(0xFF002157), // Light blue
+          ],
+        );
+      case 'dancing':
+      case 'dance':
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF00743c), // Deep green
+            Color(0xFF00743c), // Medium green
+            Color(0xFF00743c), // Light green
+          ],
+        );
+      case 'acting':
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF540693), // Deep purple
+            Color(0xFF540693), // Medium purple
+            Color(0xFF540693), // Light purple
+          ],
+        );
+      default:
+        return const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF1E3A8A), // Default blue
+            Color(0xFF3B82F6),
+            Color(0xFF60A5FA),
+          ],
+        );
+    }
+  }
+
+  // Get category-specific background image
+  String _getCategoryBackgroundImage() {
+    switch (widget.data.categoryName.toLowerCase()) {
+      case 'singing':
+        return 'lib/assets/singing_bg.png';
+      case 'dancing':
+      case 'dance':
+        return 'lib/assets/dancing_bg.png';
+      case 'acting':
+        return 'lib/assets/acting_bg.png';
+      default:
+        return 'lib/assets/singing_bg.png'; // Default fallback
+    }
+  }
+
+  // Get background color based on category
   Widget _buildComicElements(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 768;
@@ -303,7 +381,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
       ),
       child: Text(
         text,
-        style: GoogleFonts.fredoka(
+        style: GoogleFonts.bowlbyOne(
           fontSize: isMobile ? 14 : 18,
           fontWeight: FontWeight.w900,
           color: text == 'ZAP!' || text == 'WOW!' ? Colors.black : Colors.white,
@@ -319,39 +397,17 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: const Color(0xFF2A0845),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.yellow,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.black, width: 3),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                offset: const Offset(4, 4),
-                blurRadius: 0,
-              ),
-            ],
-          ),
-          child: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-              size: 20,
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
+        automaticallyImplyLeading: false,
         title: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.cyan,
+            color: _getHeaderColor(),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.black, width: 3),
+            border: Border.all(color: Colors.white, width: 3),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.3),
@@ -362,10 +418,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
           ),
           child: Text(
             widget.data.categoryName.toUpperCase(),
-            style: GoogleFonts.fredoka(
+            style: GoogleFonts.bowlbyOne(
               fontSize: isMobile ? 14 : 18,
               fontWeight: FontWeight.w700,
-              color: Colors.black,
+              color: Colors.white,
               letterSpacing: isMobile ? 1 : 1.5,
             ),
           ),
@@ -377,18 +433,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
           // Main content
           Container(
             width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF2A0845), // Deep purple
-                  Color(0xFF7209B7), // Bright purple
-                  Color(0xFF560BAD), // Medium purple
-                  Color(0xFF480CA8), // Dark purple
-                ],
-              ),
-            ),
+            decoration: BoxDecoration(gradient: _getCategoryGradient()),
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
@@ -397,6 +442,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
                   child: _HeroSection(
                     data: widget.data,
                     imageAsset: widget.imageAsset,
+                    backgroundImage: _getCategoryBackgroundImage(),
                   ),
                 ),
 
@@ -405,31 +451,60 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
 
                 // Prizes Section - Now FIRST and GRAND!
                 SliverToBoxAdapter(
-                  child: _GrandPrizesSection(data: widget.data),
+                  child: _GrandPrizesSection(
+                    data: widget.data,
+                    headerColor: _getHeaderColor(),
+                    categoryGradient: _getCategoryGradient(),
+                  ),
                 ),
 
                 // Action Buttons Section (Entry Format, Rules, Judging Criteria)
                 SliverToBoxAdapter(
-                  child: _ActionButtonsSection(data: widget.data),
+                  child: _ActionButtonsSection(
+                    data: widget.data,
+                    headerColor: _getHeaderColor(),
+                  ),
                 ),
 
                 // Category Information Cards
                 SliverToBoxAdapter(
-                  child: _CategoryInfoSection(data: widget.data),
+                  child: _CategoryInfoSection(
+                    data: widget.data,
+                    headerColor: _getHeaderColor(),
+                    categoryGradient: _getCategoryGradient(),
+                  ),
                 ),
 
                 // Spotify Section (only for singing category)
                 if (widget.data.categoryName.toLowerCase().contains('singing'))
-                  SliverToBoxAdapter(child: _SpotifySection()),
+                  SliverToBoxAdapter(
+                    child: _SpotifySection(headerColor: _getHeaderColor()),
+                  ),
 
                 // Participant Benefits Section - WIN OR LOSE style
-                SliverToBoxAdapter(child: _ParticipantBenefitsSection()),
+                SliverToBoxAdapter(
+                  child: _ParticipantBenefitsSection(
+                    categoryName: widget.data.categoryName,
+                    headerColor: _getHeaderColor(),
+                    categoryGradient: _getCategoryGradient(),
+                  ),
+                ),
 
                 // Testimonials Section
-                SliverToBoxAdapter(child: _TestimonialsSection()),
+                SliverToBoxAdapter(
+                  child: _TestimonialsSection(
+                    headerColor: _getHeaderColor(),
+                    categoryGradient: _getCategoryGradient(),
+                  ),
+                ),
 
                 // Footer Section with policies
-                SliverToBoxAdapter(child: _FooterSection()),
+                SliverToBoxAdapter(
+                  child: _FooterSection(
+                    headerColor: _getHeaderColor(),
+                    categoryGradient: _getCategoryGradient(),
+                  ),
+                ),
 
                 // Extra spacing for bottom fixed button
                 SliverToBoxAdapter(
@@ -503,7 +578,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
             scale: 1.0 + (_bounceController.value * 0.05),
             child: Center(
               child: Container(
-                width: isMobile ? double.infinity : 390,
+                width: isMobile ? double.infinity : 400,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -562,7 +637,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
                         const SizedBox(width: 12),
                         Text(
                           'REGISTER NOW!',
-                          style: GoogleFonts.fredoka(
+                          style: GoogleFonts.bowlbyOne(
                             fontSize: isMobile ? 22 : 26,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -600,8 +675,13 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
 class _HeroSection extends StatelessWidget {
   final CategoryDetailData data;
   final String imageAsset;
+  final String backgroundImage;
 
-  const _HeroSection({required this.data, required this.imageAsset});
+  const _HeroSection({
+    required this.data,
+    required this.imageAsset,
+    required this.backgroundImage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -613,7 +693,19 @@ class _HeroSection extends StatelessWidget {
       width: double.infinity,
       child: Stack(
         children: [
-          // Comic-style background with halftone pattern
+          // Background image with overlay
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(backgroundImage),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+
+          // Comic-style overlay gradient
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -621,10 +713,10 @@ class _HeroSection extends StatelessWidget {
                   center: Alignment.center,
                   radius: 1.5,
                   colors: [
-                    Colors.yellow.withOpacity(0.8),
-                    Colors.orange.withOpacity(0.6),
-                    Colors.red.withOpacity(0.4),
-                    Colors.purple.withOpacity(0.8),
+                    Colors.yellow.withOpacity(0.3),
+                    Colors.orange.withOpacity(0.2),
+                    Colors.red.withOpacity(0.1),
+                    Colors.purple.withOpacity(0.3),
                   ],
                 ),
               ),
@@ -662,7 +754,7 @@ class _HeroSection extends StatelessWidget {
                 ),
                 child: Text(
                   'POW!',
-                  style: GoogleFonts.fredoka(
+                  style: GoogleFonts.bowlbyOne(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     color: Colors.black,
@@ -696,7 +788,7 @@ class _HeroSection extends StatelessWidget {
                 ),
                 child: Text(
                   'WOW!',
-                  style: GoogleFonts.fredoka(
+                  style: GoogleFonts.bowlbyOne(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     color: Colors.black,
@@ -755,7 +847,7 @@ class _HeroSection extends StatelessWidget {
                   //     ),
                   //     child: Text(
                   //       'Competition Challenge!',
-                  //       style: GoogleFonts.fredoka(
+                  //       style: GoogleFonts.bowlbyOne(
                   //         fontSize: isMobile ? 16 : 20,
                   //         fontWeight: FontWeight.w700,
                   //         color: Colors.black,
@@ -808,14 +900,7 @@ class _AnimatedTextBannerState extends State<_AnimatedTextBanner>
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Colors.red,
-            Colors.orange,
-            Colors.yellow,
-            Colors.green,
-            Colors.blue,
-            Colors.purple,
-          ],
+          colors: [Colors.white, Colors.white],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
@@ -852,7 +937,7 @@ class _AnimatedTextBannerState extends State<_AnimatedTextBanner>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     for (int i = 0; i < 8; i++) ...[
-                      _bannerItem('SUBMIT FROM 1 OCT TO 30 OCT 2025', 16),
+                      _bannerItem('SUBMIT FROM 1 OCT TO 30 OCT 2025', 18),
                       const SizedBox(width: 30),
                       _bannerItem('✦', 16),
                       const SizedBox(width: 30),
@@ -933,7 +1018,7 @@ class _AnimatedTextBannerState extends State<_AnimatedTextBanner>
       ),
       child: Text(
         text,
-        style: GoogleFonts.fredoka(
+        style: GoogleFonts.bowlbyOne(
           fontSize: fontSize,
           fontWeight: FontWeight.w900,
           color: Colors.black,
@@ -949,8 +1034,14 @@ class _AnimatedTextBannerState extends State<_AnimatedTextBanner>
 // Category Info Section with cards like IFP's category selection
 class _CategoryInfoSection extends StatelessWidget {
   final CategoryDetailData data;
+  final Color headerColor;
+  final LinearGradient categoryGradient;
 
-  const _CategoryInfoSection({required this.data});
+  const _CategoryInfoSection({
+    required this.data,
+    required this.headerColor,
+    required this.categoryGradient,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -961,15 +1052,7 @@ class _CategoryInfoSection extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(isMobile ? 20 : 40),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.green.withOpacity(0.3),
-            Colors.blue.withOpacity(0.4),
-            Colors.cyan.withOpacity(0.3),
-          ],
-        ),
+        gradient: categoryGradient,
         border: Border.all(color: Colors.black, width: 4),
       ),
       child: Column(
@@ -978,12 +1061,12 @@ class _CategoryInfoSection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               decoration: BoxDecoration(
-                color: Colors.orange,
+                color: headerColor,
                 borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.black, width: 4),
+                border: Border.all(color: Colors.white, width: 4),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black,
+                    color: Colors.white,
                     offset: const Offset(6, 6),
                     blurRadius: 0,
                   ),
@@ -992,19 +1075,19 @@ class _CategoryInfoSection extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('🏆', style: TextStyle(fontSize: isMobile ? 24 : 30)),
+                  Text('🏆', style: TextStyle(fontSize: isMobile ? 20 : 30)),
                   SizedBox(width: isMobile ? 8 : 12),
                   Text(
                     'WHEN WHO WHERE',
-                    style: GoogleFonts.fredoka(
-                      fontSize: isMobile ? 20 : 28,
+                    style: GoogleFonts.bowlbyOne(
+                      fontSize: isMobile ? 18 : 28,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
                       letterSpacing: 1,
                     ),
                   ),
                   SizedBox(width: isMobile ? 8 : 12),
-                  Text('🏆', style: TextStyle(fontSize: isMobile ? 24 : 30)),
+                  Text('🏆', style: TextStyle(fontSize: isMobile ? 20 : 30)),
                 ],
               ),
             ),
@@ -1034,7 +1117,7 @@ class _CategoryInfoSection extends StatelessWidget {
                       'TIMELINE',
                       data.timeline,
                       Icons.schedule,
-                      Colors.orange,
+                      Colors.purpleAccent,
                       isMobile,
                     ),
                   ],
@@ -1062,7 +1145,7 @@ class _CategoryInfoSection extends StatelessWidget {
                       'TIMELINE',
                       data.timeline,
                       Icons.schedule,
-                      Colors.orange,
+                      Colors.purpleAccent,
                       isMobile,
                     ),
                   ],
@@ -1133,7 +1216,7 @@ class _CategoryInfoSection extends StatelessWidget {
                           ),
                           child: Text(
                             title,
-                            style: GoogleFonts.fredoka(
+                            style: GoogleFonts.bowlbyOne(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
                               color: Colors.white,
@@ -1143,7 +1226,7 @@ class _CategoryInfoSection extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           value,
-                          style: GoogleFonts.fredoka(
+                          style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.black,
@@ -1193,7 +1276,7 @@ class _CategoryInfoSection extends StatelessWidget {
                     ),
                     child: Text(
                       title,
-                      style: GoogleFonts.fredoka(
+                      style: GoogleFonts.bowlbyOne(
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         color: Colors.white,
@@ -1203,7 +1286,7 @@ class _CategoryInfoSection extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     value,
-                    style: GoogleFonts.fredoka(
+                    style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
@@ -1219,7 +1302,9 @@ class _CategoryInfoSection extends StatelessWidget {
 
 // Spotify Section - Comic Book Style!
 class _SpotifySection extends StatelessWidget {
-  const _SpotifySection();
+  final Color headerColor;
+
+  const _SpotifySection({required this.headerColor});
 
   @override
   Widget build(BuildContext context) {
@@ -1246,12 +1331,12 @@ class _SpotifySection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: headerColor,
                 borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.black, width: 4),
+                border: Border.all(color: Colors.white, width: 4),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black,
+                    color: Colors.white,
                     offset: const Offset(6, 6),
                     blurRadius: 0,
                   ),
@@ -1268,7 +1353,7 @@ class _SpotifySection extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     'CHOOSE A SONG',
-                    style: GoogleFonts.fredoka(
+                    style: GoogleFonts.bowlbyOne(
                       fontSize: isMobile ? 18 : 24,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
@@ -1288,28 +1373,34 @@ class _SpotifySection extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Comic-style description
-          Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              color: Colors.yellow.withOpacity(0.9),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.black, width: 3),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black,
-                  offset: const Offset(4, 4),
-                  blurRadius: 0,
+          Center(
+            child: Container(
+              constraints: BoxConstraints(maxWidth: isMobile ? 320 : 850),
+              padding: const EdgeInsets.all(16),
+              alignment: Alignment.center,
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                color: Colors.yellow.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.black, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    offset: const Offset(4, 4),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              child: Text(
+                '🎵 Choose a song! Perfect for your singing performance! 🎵'
+                    .toUpperCase(),
+                textAlign: TextAlign.center,
+                style: GoogleFonts.bowlbyOne(
+                  fontSize: isMobile ? 14 : 16,
+                  fontWeight: FontWeight.w600,
+                  color: headerColor,
+                  letterSpacing: 2,
                 ),
-              ],
-            ),
-            child: Text(
-              '🎵 Choose a song! Perfect for your singing performance! 🎵',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.fredoka(
-                fontSize: isMobile ? 14 : 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
               ),
             ),
           ),
@@ -1322,42 +1413,42 @@ class _SpotifySection extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Comic-style "More Songs" button
-          Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.cyan,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.black, width: 3),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black,
-                    offset: const Offset(4, 4),
-                    blurRadius: 0,
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.library_music,
-                    color: Colors.black,
-                    size: isMobile ? 20 : 24,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Explore More on Spotify',
-                    style: GoogleFonts.fredoka(
-                      fontSize: isMobile ? 14 : 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // Center(
+          //   child: Container(
+          //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          //     decoration: BoxDecoration(
+          //       color: Colors.cyan,
+          //       borderRadius: BorderRadius.circular(20),
+          //       border: Border.all(color: Colors.black, width: 3),
+          //       boxShadow: [
+          //         BoxShadow(
+          //           color: Colors.black,
+          //           offset: const Offset(4, 4),
+          //           blurRadius: 0,
+          //         ),
+          //       ],
+          //     ),
+          //     child: Row(
+          //       mainAxisSize: MainAxisSize.min,
+          //       children: [
+          //         Icon(
+          //           Icons.library_music,
+          //           color: Colors.black,
+          //           size: isMobile ? 20 : 24,
+          //         ),
+          //         const SizedBox(width: 8),
+          //         Text(
+          //           'Explore More on Spotify',
+          //           style: GoogleFonts.bowlbyOne(
+          //             fontSize: isMobile ? 14 : 16,
+          //             fontWeight: FontWeight.w700,
+          //             color: Colors.black,
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -1519,7 +1610,7 @@ class _AutoScrollCarouselState extends State<_AutoScrollCarousel>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Colors.yellow, Colors.orange],
+                    colors: [Colors.blue, Colors.blue],
                   ),
                   border: Border.all(color: Colors.black, width: 3),
                   boxShadow: [
@@ -1581,7 +1672,7 @@ class _AutoScrollCarouselState extends State<_AutoScrollCarousel>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Colors.cyan, Colors.blue],
+                    colors: [Colors.blue, Colors.blue],
                   ),
                   border: Border.all(color: Colors.black, width: 3),
                   boxShadow: [
@@ -1616,8 +1707,14 @@ class _AutoScrollCarouselState extends State<_AutoScrollCarousel>
 // Grand Prizes Section - First and Most Attractive!
 class _GrandPrizesSection extends StatefulWidget {
   final CategoryDetailData data;
+  final Color headerColor;
+  final LinearGradient categoryGradient;
 
-  const _GrandPrizesSection({required this.data});
+  const _GrandPrizesSection({
+    required this.data,
+    required this.headerColor,
+    required this.categoryGradient,
+  });
 
   @override
   State<_GrandPrizesSection> createState() => _GrandPrizesSectionState();
@@ -1658,15 +1755,7 @@ class _GrandPrizesSectionState extends State<_GrandPrizesSection>
       width: double.infinity,
       padding: EdgeInsets.all(isMobile ? 20 : 40),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.amber.withOpacity(0.3),
-            Colors.yellow.withOpacity(0.5),
-            Colors.orange.withOpacity(0.4),
-          ],
-        ),
+        gradient: widget.categoryGradient,
         border: Border.all(color: Colors.black, width: 6),
         boxShadow: [
           BoxShadow(
@@ -1679,101 +1768,134 @@ class _GrandPrizesSectionState extends State<_GrandPrizesSection>
       child: Column(
         children: [
           // Grand Header with Animation
+          // FadeInDown(
+          //   child: AnimatedBuilder(
+          //     animation: _sparkleController,
+          //     builder: (context, child) {
+          //       return Container(
+          //         padding: EdgeInsets.symmetric(
+          //           horizontal: isMobile ? 20 : 30,
+          //           vertical: isMobile ? 20 : 25,
+          //         ),
+          //         decoration: BoxDecoration(
+          //           gradient: widget.categoryGradient,
+          //           borderRadius: BorderRadius.circular(30),
+          //           border: Border.all(color: Colors.black, width: 5),
+          //           boxShadow: [
+          //             BoxShadow(
+          //               color: Colors.black,
+          //               offset: const Offset(8, 8),
+          //               blurRadius: 0,
+          //             ),
+          //           ],
+          //         ),
+          //         child: Column(
+          //           children: [
+          //             Row(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               children: [
+          //                 Transform.rotate(
+          //                   angle:
+          //                       math.sin(
+          //                         _sparkleController.value * 2 * math.pi,
+          //                       ) *
+          //                       0.1,
+          //                   child: Text(
+          //                     '💰',
+          //                     style: TextStyle(fontSize: isMobile ? 32 : 40),
+          //                   ),
+          //                 ),
+          //                 SizedBox(width: isMobile ? 12 : 16),
+          //                 Text(
+          //                   'CASH PRIZES',
+          //                   style: GoogleFonts.bowlbyOne(
+          //                     fontSize: isMobile ? 28 : 40,
+          //                     fontWeight: FontWeight.w900,
+          //                     color: Colors.white,
+          //                     letterSpacing: 2,
+          //                   ),
+          //                 ),
+          //                 SizedBox(width: isMobile ? 12 : 16),
+          //                 Transform.rotate(
+          //                   angle:
+          //                       -math.sin(
+          //                         _sparkleController.value * 2 * math.pi,
+          //                       ) *
+          //                       0.1,
+          //                   child: Text(
+          //                     '💰',
+          //                     style: TextStyle(fontSize: isMobile ? 32 : 40),
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //             const SizedBox(height: 10),
+          //             Container(
+          //               padding: const EdgeInsets.symmetric(
+          //                 horizontal: 16,
+          //                 vertical: 8,
+          //               ),
+          //               decoration: BoxDecoration(
+          //                 color: Colors.red,
+          //                 borderRadius: BorderRadius.circular(20),
+          //                 border: Border.all(color: Colors.black, width: 3),
+          //                 // boxShadow: [
+          //                 //   BoxShadow(
+          //                 //     color: Colors.black,
+          //                 //     offset: const Offset(4, 4),
+          //                 //     blurRadius: 0,
+          //                 //   ),
+          //                 // ],
+          //               ),
+          //               child: Text(
+          //                 'WIN BIG & GET FAMOUS! 🎉',
+          //                 style: GoogleFonts.bowlbyOne(
+          //                   fontSize: isMobile ? 16 : 20,
+          //                   fontWeight: FontWeight.w700,
+          //                   color: Colors.white,
+          //                 ),
+          //                 textAlign: TextAlign.center,
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       );
+          //     },
+          //   ),
+          // ),
           FadeInDown(
-            child: AnimatedBuilder(
-              animation: _sparkleController,
-              builder: (context, child) {
-                return Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isMobile ? 20 : 30,
-                    vertical: isMobile ? 20 : 25,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: BoxDecoration(
+                color: widget.headerColor,
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: Colors.white, width: 4),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.white,
+                    offset: const Offset(6, 6),
+                    blurRadius: 0,
                   ),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.amber, Colors.yellow, Colors.orange],
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('💰', style: TextStyle(fontSize: isMobile ? 20 : 30)),
+                  SizedBox(width: isMobile ? 8 : 12),
+                  Text(
+                    'CASH PRIZES',
+                    style: GoogleFonts.bowlbyOne(
+                      fontSize: isMobile ? 20 : 28,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: 1,
                     ),
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.black, width: 5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black,
-                        offset: const Offset(8, 8),
-                        blurRadius: 0,
-                      ),
-                    ],
                   ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Transform.rotate(
-                            angle:
-                                math.sin(
-                                  _sparkleController.value * 2 * math.pi,
-                                ) *
-                                0.1,
-                            child: Text(
-                              '💰',
-                              style: TextStyle(fontSize: isMobile ? 32 : 40),
-                            ),
-                          ),
-                          SizedBox(width: isMobile ? 12 : 16),
-                          Text(
-                            'CASH PRIZES',
-                            style: GoogleFonts.fredoka(
-                              fontSize: isMobile ? 28 : 40,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.black,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                          SizedBox(width: isMobile ? 12 : 16),
-                          Transform.rotate(
-                            angle:
-                                -math.sin(
-                                  _sparkleController.value * 2 * math.pi,
-                                ) *
-                                0.1,
-                            child: Text(
-                              '💰',
-                              style: TextStyle(fontSize: isMobile ? 32 : 40),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.black, width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black,
-                              offset: const Offset(4, 4),
-                              blurRadius: 0,
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          'WIN BIG & GET FAMOUS! 🎉',
-                          style: GoogleFonts.fredoka(
-                            fontSize: isMobile ? 16 : 20,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                  SizedBox(width: isMobile ? 8 : 12),
+                  Text('💰', style: TextStyle(fontSize: isMobile ? 20 : 30)),
+                ],
+              ),
             ),
           ),
 
@@ -1802,7 +1924,27 @@ class _GrandPrizesSectionState extends State<_GrandPrizesSection>
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.amber, Colors.yellow],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors:
+                          widget.data.categoryName.toLowerCase().contains(
+                            'dance',
+                          )
+                          ? [
+                              Color(0xFF4ADE80),
+                              Color(0xFF4ADE80),
+                            ] // Green shades for dancing
+                          : widget.data.categoryName.toLowerCase().contains(
+                              'acting',
+                            )
+                          ? [
+                              Color(0xFFA855F7),
+                              Color(0xFFA855F7),
+                            ] // Purple shades for acting
+                          : [
+                              Color(0xFF00d2ff),
+                              Color(0xFF00d2ff),
+                            ], // Default blue
                     ),
                     borderRadius: BorderRadius.circular(25),
                     border: Border.all(color: Colors.black, width: 5),
@@ -1822,16 +1964,45 @@ class _GrandPrizesSectionState extends State<_GrandPrizesSection>
                           Icon(
                             Icons.emoji_events,
                             size: isMobile ? 35 : 50,
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
-                          const SizedBox(width: 16),
-                          Text(
-                            '1ST PLACE WINNER',
-                            style: GoogleFonts.fredoka(
-                              fontSize: isMobile ? 24 : 32,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.black,
-                              letterSpacing: 1,
+                          const SizedBox(width: 10),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '1',
+                                  style: GoogleFonts.bowlbyOne(
+                                    fontSize: isMobile ? 24 : 32,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                                WidgetSpan(
+                                  child: Transform.translate(
+                                    offset: const Offset(2, -8),
+                                    child: Text(
+                                      'st',
+                                      style: GoogleFonts.bowlbyOne(
+                                        fontSize: isMobile ? 14 : 18,
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.white,
+                                        letterSpacing: 0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' PLACE WINNER',
+                                  style: GoogleFonts.bowlbyOne(
+                                    fontSize: isMobile ? 21 : 32,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -1840,10 +2011,10 @@ class _GrandPrizesSectionState extends State<_GrandPrizesSection>
                       // Extract cash amount from winner description
                       Text(
                         _extractCashAmount(widget.data.awards.winner),
-                        style: GoogleFonts.fredoka(
+                        style: GoogleFonts.bowlbyOne(
                           fontSize: isMobile ? 36 : 48,
                           fontWeight: FontWeight.w900,
-                          color: Colors.red,
+                          color: widget.headerColor,
                           letterSpacing: 1,
                         ),
                       ),
@@ -1854,16 +2025,21 @@ class _GrandPrizesSectionState extends State<_GrandPrizesSection>
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(15),
-                          border: Border.all(color: Colors.yellow, width: 2),
+                          border: Border.all(
+                            color: widget.headerColor,
+                            width: 2,
+                          ),
                         ),
                         child: Text(
-                          'Plus Trophy + Certificate + Digital Badge + Fame!',
-                          style: GoogleFonts.fredoka(
-                            fontSize: isMobile ? 12 : 14,
+                          'Trophy + Certificate + Digital Badge + Fame!'
+                              .toUpperCase(),
+                          style: GoogleFonts.bowlbyOne(
+                            fontSize: isMobile ? 12 : 18,
                             fontWeight: FontWeight.w600,
-                            color: Colors.yellow,
+                            color: widget.headerColor,
+                            letterSpacing: 2,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -1885,7 +2061,7 @@ class _GrandPrizesSectionState extends State<_GrandPrizesSection>
               child: _buildSmallPrizeCard(
                 'RUNNER UP',
                 widget.data.awards.runnerUp,
-                Colors.grey.shade300,
+                Colors.white,
                 Icons.workspace_premium,
                 isMobile,
               ),
@@ -1896,7 +2072,7 @@ class _GrandPrizesSectionState extends State<_GrandPrizesSection>
               child: _buildSmallPrizeCard(
                 'AUDIENCE CHOICE',
                 widget.data.awards.audienceChoice,
-                Colors.blue.shade300,
+                Colors.white,
                 Icons.favorite,
                 isMobile,
               ),
@@ -1910,7 +2086,7 @@ class _GrandPrizesSectionState extends State<_GrandPrizesSection>
         _buildSmallPrizeCard(
           'TOP COLLEGE AWARD',
           widget.data.awards.topCollege,
-          Colors.green.shade300,
+          Colors.white,
           Icons.school,
           isMobile,
           fullWidth: true,
@@ -1956,24 +2132,24 @@ class _GrandPrizesSectionState extends State<_GrandPrizesSection>
         ),
         child: Column(
           children: [
-            Icon(icon, color: Colors.black, size: isMobile ? 32 : 40),
+            Icon(icon, color: Color(0xFF2a2a2a), size: isMobile ? 32 : 40),
             const SizedBox(height: 8),
             Text(
               title,
-              style: GoogleFonts.fredoka(
+              style: GoogleFonts.bowlbyOne(
                 fontSize: isMobile ? 14 : 16,
                 fontWeight: FontWeight.w900,
-                color: Colors.black,
+                color: Color(0xFF2a2a2a),
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               _extractCashAmount(description),
-              style: GoogleFonts.fredoka(
-                fontSize: isMobile ? 16 : 20,
+              style: GoogleFonts.bowlbyOne(
+                fontSize: isMobile ? 16 : 24,
                 fontWeight: FontWeight.w700,
-                color: Colors.red,
+                color: widget.headerColor,
               ),
               textAlign: TextAlign.center,
             ),
@@ -1987,8 +2163,9 @@ class _GrandPrizesSectionState extends State<_GrandPrizesSection>
 // Action Buttons Section - For Entry Format, Rules, and Judging Criteria
 class _ActionButtonsSection extends StatelessWidget {
   final CategoryDetailData data;
+  final Color headerColor;
 
-  const _ActionButtonsSection({required this.data});
+  const _ActionButtonsSection({required this.data, required this.headerColor});
 
   @override
   Widget build(BuildContext context) {
@@ -2004,12 +2181,12 @@ class _ActionButtonsSection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: headerColor,
                 borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.black, width: 4),
+                border: Border.all(color: Colors.white, width: 4),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black,
+                    color: Colors.white,
                     offset: const Offset(6, 6),
                     blurRadius: 0,
                   ),
@@ -2018,19 +2195,19 @@ class _ActionButtonsSection extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('🏆', style: TextStyle(fontSize: isMobile ? 20 : 30)),
+                  Text('🏆', style: TextStyle(fontSize: isMobile ? 15 : 30)),
                   SizedBox(width: isMobile ? 8 : 12),
                   Text(
                     'COMPETITION DETAILS',
-                    style: GoogleFonts.fredoka(
-                      fontSize: isMobile ? 20 : 28,
+                    style: GoogleFonts.bowlbyOne(
+                      fontSize: isMobile ? 16 : 28,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
                       letterSpacing: 1,
                     ),
                   ),
                   SizedBox(width: isMobile ? 8 : 12),
-                  Text('🏆', style: TextStyle(fontSize: isMobile ? 20 : 30)),
+                  Text('🏆', style: TextStyle(fontSize: isMobile ? 15 : 30)),
                 ],
               ),
             ),
@@ -2046,9 +2223,9 @@ class _ActionButtonsSection extends StatelessWidget {
             children: [
               _buildActionButton(
                 context,
-                'ENTRY FORMAT',
+                'ENTRY \n FORMAT',
                 Icons.format_list_bulleted,
-                Colors.cyan,
+                Colors.white,
                 () => _showEntryFormatDialog(context),
                 isMobile,
               ),
@@ -2056,7 +2233,7 @@ class _ActionButtonsSection extends StatelessWidget {
                 context,
                 'RULES & REGULATIONS',
                 Icons.rule,
-                Colors.orange,
+                Colors.white,
                 () => _showRulesDialog(context),
                 isMobile,
               ),
@@ -2064,7 +2241,7 @@ class _ActionButtonsSection extends StatelessWidget {
                 context,
                 'JUDGING CRITERIA',
                 Icons.gavel,
-                Colors.purple,
+                Colors.white,
                 () => _showJudgingDialog(context),
                 isMobile,
               ),
@@ -2103,14 +2280,14 @@ class _ActionButtonsSection extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Icon(icon, size: isMobile ? 32 : 40, color: Colors.black),
+              Icon(icon, size: isMobile ? 32 : 40, color: Color(0xFF2a2a2a)),
               const SizedBox(height: 12),
               Text(
                 title,
-                style: GoogleFonts.fredoka(
+                style: GoogleFonts.bowlbyOne(
                   fontSize: isMobile ? 14 : 16,
                   fontWeight: FontWeight.w900,
-                  color: Colors.black,
+                  color: Color(0xFF2a2a2a),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -2121,12 +2298,12 @@ class _ActionButtonsSection extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: headerColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   'TAP TO VIEW',
-                  style: GoogleFonts.fredoka(
+                  style: GoogleFonts.bowlbyOne(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
@@ -2175,9 +2352,7 @@ class _EntryFormatDialog extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 500),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.cyan.shade100, Colors.blue.shade100],
-          ),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(25),
           border: Border.all(color: Colors.black, width: 4),
           boxShadow: [
@@ -2195,13 +2370,13 @@ class _EntryFormatDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.cyan,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(color: Colors.black, width: 3),
               ),
               child: Text(
                 'ENTRY FORMAT',
-                style: GoogleFonts.fredoka(
+                style: GoogleFonts.bowlbyOne(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
                   color: Colors.black,
@@ -2236,7 +2411,7 @@ class _EntryFormatDialog extends StatelessWidget {
               ),
               child: Text(
                 'CLOSE',
-                style: GoogleFonts.fredoka(fontWeight: FontWeight.w700),
+                style: GoogleFonts.bowlbyOne(fontWeight: FontWeight.w700),
               ),
             ),
           ],
@@ -2259,7 +2434,7 @@ class _EntryFormatDialog extends StatelessWidget {
             ),
             child: Text(
               label,
-              style: GoogleFonts.fredoka(
+              style: GoogleFonts.bowlbyOne(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
@@ -2270,7 +2445,7 @@ class _EntryFormatDialog extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: GoogleFonts.fredoka(
+              style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
@@ -2295,9 +2470,7 @@ class _RulesDialog extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 500, maxHeight: 600),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.orange.shade100, Colors.red.shade100],
-          ),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(25),
           border: Border.all(color: Colors.black, width: 4),
           boxShadow: [
@@ -2315,13 +2488,13 @@ class _RulesDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.orange,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(color: Colors.black, width: 3),
               ),
               child: Text(
                 'RULES & REGULATIONS',
-                style: GoogleFonts.fredoka(
+                style: GoogleFonts.bowlbyOne(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
                   color: Colors.black,
@@ -2351,7 +2524,7 @@ class _RulesDialog extends StatelessWidget {
                           child: Center(
                             child: Text(
                               '${index + 1}',
-                              style: GoogleFonts.fredoka(
+                              style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w900,
                                 color: Colors.white,
@@ -2363,7 +2536,7 @@ class _RulesDialog extends StatelessWidget {
                         Expanded(
                           child: Text(
                             rules[index],
-                            style: GoogleFonts.fredoka(
+                            style: GoogleFonts.bowlbyOne(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Colors.black,
@@ -2396,7 +2569,7 @@ class _RulesDialog extends StatelessWidget {
               ),
               child: Text(
                 'CLOSE',
-                style: GoogleFonts.fredoka(fontWeight: FontWeight.w700),
+                style: GoogleFonts.bowlbyOne(fontWeight: FontWeight.w700),
               ),
             ),
           ],
@@ -2418,9 +2591,7 @@ class _JudgingDialog extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 500),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.purple.shade100, Colors.pink.shade100],
-          ),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(25),
           border: Border.all(color: Colors.black, width: 4),
           boxShadow: [
@@ -2438,16 +2609,16 @@ class _JudgingDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.purple,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(color: Colors.black, width: 3),
               ),
               child: Text(
                 'JUDGING CRITERIA',
-                style: GoogleFonts.fredoka(
+                style: GoogleFonts.bowlbyOne(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -2468,7 +2639,7 @@ class _JudgingDialog extends StatelessWidget {
                           ),
                           child: Text(
                             '${criterion.weightage}%',
-                            style: GoogleFonts.fredoka(
+                            style: GoogleFonts.poppins(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
                               color: Colors.white,
@@ -2479,7 +2650,7 @@ class _JudgingDialog extends StatelessWidget {
                         Expanded(
                           child: Text(
                             criterion.parameter,
-                            style: GoogleFonts.fredoka(
+                            style: GoogleFonts.bowlbyOne(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Colors.black,
@@ -2511,7 +2682,7 @@ class _JudgingDialog extends StatelessWidget {
               ),
               child: Text(
                 'CLOSE',
-                style: GoogleFonts.fredoka(fontWeight: FontWeight.w700),
+                style: GoogleFonts.bowlbyOne(fontWeight: FontWeight.w700),
               ),
             ),
           ],
@@ -2523,7 +2694,15 @@ class _JudgingDialog extends StatelessWidget {
 
 // Participant Benefits Section - IFP Style
 class _ParticipantBenefitsSection extends StatelessWidget {
-  const _ParticipantBenefitsSection();
+  final String categoryName;
+  final Color headerColor;
+  final LinearGradient categoryGradient;
+
+  const _ParticipantBenefitsSection({
+    required this.categoryName,
+    required this.headerColor,
+    required this.categoryGradient,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -2537,10 +2716,17 @@ class _ParticipantBenefitsSection extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            const Color(0xFFFFFF00), // Bright yellow like IFP
-            const Color(0xFFFF69B4), // Hot pink
-          ],
+          colors: categoryName.toLowerCase().contains('dance')
+              ? [
+                  Color(0xFF4ADE80),
+                  Color(0xFF4ADE80),
+                ] // Green shades for dancing
+              : categoryName.toLowerCase().contains('acting')
+              ? [
+                  Color(0xFFA855F7),
+                  Color(0xFFA855F7),
+                ] // Purple shades for acting
+              : [Color(0xFF00d2ff), Color(0xFF00d2ff)], // Default blue
         ),
         border: Border.all(color: Colors.black, width: 6),
         boxShadow: [
@@ -2559,74 +2745,74 @@ class _ParticipantBenefitsSection extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  'WIN OR LOSE,',
-                  style: GoogleFonts.fredoka(
+                  "WIN OR LOSE, DOESN'T MATTER!",
+                  style: GoogleFonts.bowlbyOne(
                     fontSize: isMobile ? 32 : 48,
                     fontWeight: FontWeight.w900,
-                    color: const Color(0xFFFF1493), // Deep pink
+                    color: headerColor, // Deep blue (singing/default)
                     letterSpacing: 2,
-                    shadows: [
-                      Shadow(
-                        offset: const Offset(4, 4),
-                        color: Colors.black,
-                        blurRadius: 0,
-                      ),
-                    ],
+                    // shadows: [
+                    //   Shadow(
+                    //     offset: const Offset(4, 4),
+                    //     color: Colors.black,
+                    //     blurRadius: 0,
+                    //   ),
+                    // ],
                   ),
                   textAlign: TextAlign.center,
                 ),
+                // Text(
+                //   "DOESN'T MATTER!",
+                //   style: GoogleFonts.bowlbyOne(
+                //     fontSize: isMobile ? 32 : 48,
+                //     fontWeight: FontWeight.w900,
+                //     color: const Color(0xFFFF1493), // Deep pink
+                //     letterSpacing: 2,
+                //     // shadows: [
+                //     //   Shadow(
+                //     //     offset: const Offset(4, 4),
+                //     //     color: Colors.black,
+                //     //     blurRadius: 0,
+                //     //   ),
+                //     // ],
+                //   ),
+                //   textAlign: TextAlign.center,
+                // ),
+                // const SizedBox(height: 20),
                 Text(
-                  "DOESN'T MATTER!",
-                  style: GoogleFonts.fredoka(
-                    fontSize: isMobile ? 32 : 48,
+                  'PARTICIPANT WILL ALSO GET',
+                  style: GoogleFonts.bowlbyOne(
+                    fontSize: isMobile ? 40 : 48,
                     fontWeight: FontWeight.w900,
-                    color: const Color(0xFFFF1493), // Deep pink
-                    letterSpacing: 2,
-                    shadows: [
-                      Shadow(
-                        offset: const Offset(4, 4),
-                        color: Colors.black,
-                        blurRadius: 0,
-                      ),
-                    ],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'PARTICIPANT WILL',
-                  style: GoogleFonts.fredoka(
-                    fontSize: isMobile ? 40 : 64,
-                    fontWeight: FontWeight.w900,
-                    color: const Color(0xFFFF1493), // Deep pink
+                    color: headerColor,
                     letterSpacing: 3,
-                    shadows: [
-                      Shadow(
-                        offset: const Offset(6, 6),
-                        color: Colors.black,
-                        blurRadius: 0,
-                      ),
-                    ],
+                    // shadows: [
+                    //   Shadow(
+                    //     offset: const Offset(6, 6),
+                    //     color: Colors.black,
+                    //     blurRadius: 0,
+                    //   ),
+                    // ],
                   ),
                   textAlign: TextAlign.center,
                 ),
-                Text(
-                  'ALSO GET',
-                  style: GoogleFonts.fredoka(
-                    fontSize: isMobile ? 40 : 64,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.yellow.shade300,
-                    letterSpacing: 3,
-                    shadows: [
-                      Shadow(
-                        offset: const Offset(6, 6),
-                        color: Colors.black,
-                        blurRadius: 0,
-                      ),
-                    ],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                // Text(
+                //   'ALSO GET',
+                //   style: GoogleFonts.bowlbyOne(
+                //     fontSize: isMobile ? 40 : 48,
+                //     fontWeight: FontWeight.w900,
+                //     color: Color(0xFFFF1493),
+                //     letterSpacing: 3,
+                //     // shadows: [
+                //     //   Shadow(
+                //     //     offset: const Offset(6, 6),
+                //     //     color: Colors.black,
+                //     //     blurRadius: 0,
+                //     //   ),
+                //     // ],
+                //   ),
+                //   textAlign: TextAlign.center,
+                // ),
               ],
             ),
           ),
@@ -2732,19 +2918,20 @@ class _ParticipantBenefitsSection extends StatelessWidget {
               ),
               child: Text(
                 title,
-                style: GoogleFonts.fredoka(
-                  fontSize: isMobile ? 16 : 18,
-                  fontWeight: FontWeight.w900,
+                style: GoogleFonts.bowlbyOne(
+                  fontSize: isMobile ? 16 : 20,
+                  fontWeight: FontWeight.w100,
                   color: Colors.white,
+                  letterSpacing: 2,
                 ),
               ),
             ),
             const SizedBox(height: 12),
             Text(
               description,
-              style: GoogleFonts.fredoka(
-                fontSize: isMobile ? 14 : 16,
-                fontWeight: FontWeight.w600,
+              style: GoogleFonts.poppins(
+                fontSize: isMobile ? 14 : 18,
+                fontWeight: FontWeight.w800,
                 color: Colors.black,
               ),
               textAlign: TextAlign.center,
@@ -2758,7 +2945,13 @@ class _ParticipantBenefitsSection extends StatelessWidget {
 
 // Testimonials Section
 class _TestimonialsSection extends StatelessWidget {
-  const _TestimonialsSection();
+  final Color headerColor;
+  final LinearGradient categoryGradient;
+
+  const _TestimonialsSection({
+    required this.headerColor,
+    required this.categoryGradient,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -2804,15 +2997,7 @@ class _TestimonialsSection extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(isMobile ? 20 : 40),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.purple.withOpacity(0.3),
-            Colors.blue.withOpacity(0.4),
-            Colors.cyan.withOpacity(0.3),
-          ],
-        ),
+        gradient: categoryGradient,
         border: Border.all(color: Colors.black, width: 4),
       ),
       child: Column(
@@ -2822,12 +3007,12 @@ class _TestimonialsSection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               decoration: BoxDecoration(
-                color: Colors.purple,
+                color: headerColor,
                 borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.black, width: 4),
+                border: Border.all(color: Colors.white, width: 4),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black,
+                    color: Colors.white,
                     offset: const Offset(6, 6),
                     blurRadius: 0,
                   ),
@@ -2836,19 +3021,19 @@ class _TestimonialsSection extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('💬', style: TextStyle(fontSize: isMobile ? 24 : 30)),
+                  Text('💬', style: TextStyle(fontSize: isMobile ? 16 : 30)),
                   SizedBox(width: isMobile ? 8 : 12),
                   Text(
                     'WHAT PARTICIPANTS SAY',
-                    style: GoogleFonts.fredoka(
-                      fontSize: isMobile ? 20 : 28,
+                    style: GoogleFonts.bowlbyOne(
+                      fontSize: isMobile ? 14 : 28,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
                       letterSpacing: 1,
                     ),
                   ),
                   SizedBox(width: isMobile ? 8 : 12),
-                  Text('💬', style: TextStyle(fontSize: isMobile ? 24 : 30)),
+                  Text('💬', style: TextStyle(fontSize: isMobile ? 16 : 30)),
                 ],
               ),
             ),
@@ -2947,7 +3132,7 @@ class _TestimonialsSection extends StatelessWidget {
               ),
               child: Text(
                 '"${testimonial['text']}"',
-                style: GoogleFonts.fredoka(
+                style: GoogleFonts.poppins(
                   fontSize: isMobile ? 14 : 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
@@ -2970,7 +3155,7 @@ class _TestimonialsSection extends StatelessWidget {
                 children: [
                   Text(
                     testimonial['name'],
-                    style: GoogleFonts.fredoka(
+                    style: GoogleFonts.bowlbyOne(
                       fontSize: 14,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
@@ -2978,7 +3163,7 @@ class _TestimonialsSection extends StatelessWidget {
                   ),
                   Text(
                     testimonial['college'],
-                    style: GoogleFonts.fredoka(
+                    style: GoogleFonts.bowlbyOne(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: Colors.white.withOpacity(0.9),
@@ -2996,7 +3181,13 @@ class _TestimonialsSection extends StatelessWidget {
 
 // Footer Section with Policies - Comic Style
 class _FooterSection extends StatelessWidget {
-  const _FooterSection();
+  final Color headerColor;
+  final LinearGradient categoryGradient;
+
+  const _FooterSection({
+    required this.headerColor,
+    required this.categoryGradient,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -3007,19 +3198,11 @@ class _FooterSection extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(isMobile ? 20 : 40),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.deepPurple.shade900,
-            Colors.black,
-            Colors.indigo.shade900,
-          ],
-        ),
-        border: Border.all(color: Colors.yellow, width: 4),
+        color: headerColor,
+        border: Border.all(color: Colors.white, width: 4),
         boxShadow: [
           BoxShadow(
-            color: Colors.yellow.withOpacity(0.3),
+            color: Colors.white.withOpacity(0.3),
             offset: const Offset(0, -4),
             blurRadius: 0,
           ),
@@ -3033,133 +3216,58 @@ class _FooterSection extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 // Main title container
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isMobile ? 20 : 30,
-                    vertical: isMobile ? 16 : 20,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.yellow, Colors.orange],
+                Column(
+                  children: [
+                    SizedBox(
+                      height: isMobile ? 75 : 120,
+                      child: Image.asset(
+                        'lib/assets/college_logo.png',
+                        fit: BoxFit.contain,
+                        filterQuality: FilterQuality.high,
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(color: Colors.black, width: 4),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black,
-                        offset: const Offset(6, 6),
-                        blurRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '🎪',
-                            style: TextStyle(fontSize: isMobile ? 24 : 32),
-                          ),
-                          SizedBox(width: isMobile ? 8 : 12),
-                          Text(
-                            'COLLEGE THIRUVIZHA',
-                            style: GoogleFonts.fredoka(
-                              fontSize: isMobile ? 20 : 28,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.black,
-                              letterSpacing: 2,
-                              shadows: [
-                                Shadow(
-                                  offset: const Offset(2, 2),
-                                  color: Colors.white,
-                                  blurRadius: 0,
-                                ),
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(width: isMobile ? 8 : 12),
-                          Text(
-                            '🎪',
-                            style: TextStyle(fontSize: isMobile ? 24 : 32),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(15),
-                          border: Border.all(color: Colors.black, width: 2),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black,
-                              offset: const Offset(2, 2),
-                              blurRadius: 0,
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          'Tamil Nadu\'s Premier College Talent Festival',
-                          style: GoogleFonts.fredoka(
-                            fontSize: isMobile ? 12 : 16,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
                 // Comic burst effect in corners
-                Positioned(
-                  top: -10,
-                  left: -10,
-                  child: Text(
-                    '💥',
-                    style: TextStyle(fontSize: isMobile ? 20 : 24),
-                  ),
-                ),
-                Positioned(
-                  top: -10,
-                  right: -10,
-                  child: Text(
-                    '⚡',
-                    style: TextStyle(fontSize: isMobile ? 20 : 24),
-                  ),
-                ),
+                // Positioned(
+                //   top: -10,
+                //   left: -10,
+                //   child: Text(
+                //     '💥',
+                //     style: TextStyle(fontSize: isMobile ? 20 : 24),
+                //   ),
+                // ),
+                // Positioned(
+                //   top: -10,
+                //   right: -10,
+                //   child: Text(
+                //     '⚡',
+                //     style: TextStyle(fontSize: isMobile ? 20 : 24),
+                //   ),
+                // ),
               ],
             ),
           ),
 
-          SizedBox(height: isMobile ? 30 : 40),
+          SizedBox(height: isMobile ? 15 : 20),
 
           // Comic-style divider
-          Container(
-            height: 6,
-            width: isMobile ? 250 : 400,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.yellow, Colors.cyan, Colors.pink, Colors.green],
-              ),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.black, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black,
-                  offset: const Offset(3, 3),
-                  blurRadius: 0,
-                ),
-              ],
-            ),
-          ),
-
+          // Container(
+          //   height: 6,
+          //   width: isMobile ? 250 : 400,
+          //   decoration: BoxDecoration(
+          //     color: headerColor,
+          //     borderRadius: BorderRadius.circular(10),
+          //     border: Border.all(color: Colors.black, width: 2),
+          //     boxShadow: [
+          //       BoxShadow(
+          //         color: Colors.black,
+          //         offset: const Offset(3, 3),
+          //         blurRadius: 0,
+          //       ),
+          //     ],
+          //   ),
+          // ),
           SizedBox(height: isMobile ? 30 : 40),
 
           // Policy Links - Comic Style
@@ -3173,7 +3281,7 @@ class _FooterSection extends StatelessWidget {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.cyan,
+                    color: headerColor,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Colors.black, width: 3),
                     boxShadow: [
@@ -3186,10 +3294,11 @@ class _FooterSection extends StatelessWidget {
                   ),
                   child: Text(
                     'IMPORTANT STUFF 📋',
-                    style: GoogleFonts.fredoka(
+                    style: GoogleFonts.bowlbyOne(
                       fontSize: isMobile ? 16 : 20,
                       fontWeight: FontWeight.w900,
-                      color: Colors.black,
+                      color: Colors.white,
+                      letterSpacing: 2,
                     ),
                   ),
                 ),
@@ -3203,19 +3312,19 @@ class _FooterSection extends StatelessWidget {
                       context,
                       'Terms & Conditions',
                       Icons.description,
-                      Colors.blue,
+                      Colors.white,
                     ),
                     _buildComicPolicyLink(
                       context,
                       'Privacy Policy',
                       Icons.privacy_tip,
-                      Colors.green,
+                      Colors.white,
                     ),
                     _buildComicPolicyLink(
                       context,
                       'Refund Policy',
                       Icons.payment,
-                      Colors.purple,
+                      Colors.white,
                     ),
                   ],
                 ),
@@ -3231,11 +3340,9 @@ class _FooterSection extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.all(isMobile ? 20 : 24),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.indigo.shade800, Colors.purple.shade800],
-                ),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.yellow, width: 4),
+                border: Border.all(color: Colors.black, width: 4),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black,
@@ -3253,7 +3360,7 @@ class _FooterSection extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.yellow,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(color: Colors.black, width: 3),
                       boxShadow: [
@@ -3274,10 +3381,10 @@ class _FooterSection extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           'GET IN TOUCH',
-                          style: GoogleFonts.fredoka(
+                          style: GoogleFonts.bowlbyOne(
                             fontSize: isMobile ? 16 : 20,
                             fontWeight: FontWeight.w900,
-                            color: Colors.black,
+                            color: headerColor,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -3296,13 +3403,13 @@ class _FooterSection extends StatelessWidget {
                             _buildComicContactItem(
                               Icons.email,
                               'info@collegethiruvizha.com',
-                              Colors.cyan,
+                              headerColor,
                             ),
                             const SizedBox(height: 12),
                             _buildComicContactItem(
                               Icons.phone,
                               '+91 12345 67890',
-                              Colors.green,
+                              headerColor,
                             ),
                           ],
                         )
@@ -3312,13 +3419,13 @@ class _FooterSection extends StatelessWidget {
                             _buildComicContactItem(
                               Icons.email,
                               'info@collegethiruvizha.com',
-                              Colors.cyan,
+                              headerColor,
                             ),
                             const SizedBox(width: 40),
                             _buildComicContactItem(
                               Icons.phone,
                               '+91 12345 67890',
-                              Colors.green,
+                              headerColor,
                             ),
                           ],
                         ),
@@ -3335,9 +3442,9 @@ class _FooterSection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.orange,
+                color: headerColor,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.black, width: 4),
+                border: Border.all(color: Colors.white, width: 4),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black,
@@ -3350,23 +3457,23 @@ class _FooterSection extends StatelessWidget {
                 children: [
                   Text(
                     'FOLLOW US! 🚀',
-                    style: GoogleFonts.fredoka(
+                    style: GoogleFonts.bowlbyOne(
                       fontSize: isMobile ? 16 : 20,
                       fontWeight: FontWeight.w900,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildSocialButton('📘', 'Facebook', Colors.blue),
+                      _buildSocialButton('📘', 'Facebook', headerColor),
                       const SizedBox(width: 12),
-                      _buildSocialButton('📸', 'Instagram', Colors.pink),
+                      _buildSocialButton('📸', 'Instagram', headerColor),
                       const SizedBox(width: 12),
-                      _buildSocialButton('🐦', 'Twitter', Colors.cyan),
+                      _buildSocialButton('🐦', 'Twitter', headerColor),
                       const SizedBox(width: 12),
-                      _buildSocialButton('📺', 'YouTube', Colors.red),
+                      _buildSocialButton('📺', 'YouTube', headerColor),
                     ],
                   ),
                 ],
@@ -3402,7 +3509,7 @@ class _FooterSection extends StatelessWidget {
                   Flexible(
                     child: Text(
                       '${DateTime.now().year} College Thiruvizha. All rights reserved.',
-                      style: GoogleFonts.fredoka(
+                      style: GoogleFonts.bowlbyOne(
                         fontSize: isMobile ? 12 : 14,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -3448,14 +3555,14 @@ class _FooterSection extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Colors.white, size: 16),
+            Icon(icon, color: headerColor, size: 16),
             const SizedBox(width: 8),
             Text(
               title,
-              style: GoogleFonts.fredoka(
-                fontSize: 14,
+              style: GoogleFonts.poppins(
+                fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: headerColor,
               ),
             ),
           ],
@@ -3789,8 +3896,8 @@ Include: Registration ID, reason, supporting documents
           Flexible(
             child: Text(
               text,
-              style: GoogleFonts.fredoka(
-                fontSize: 12,
+              style: GoogleFonts.poppins(
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),

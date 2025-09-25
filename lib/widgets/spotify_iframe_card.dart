@@ -86,7 +86,7 @@ class _SpotifyIframeCardState extends State<SpotifyIframeCard> {
                 horizontal: 12,
               ),
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: Color(0xFF00d2ff),
                 border: Border(
                   bottom: BorderSide(color: Colors.black, width: 3),
                 ),
